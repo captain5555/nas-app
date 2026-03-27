@@ -1,0 +1,24 @@
+{
+  "status": "changes_needed",
+  "issues": [
+    "Missing handling for files added/removed directly on NAS (bypassing the app)",
+    "No details on resumable upload/download for large files",
+    "Vague conflict resolution for concurrent modifications to the same .material_index.json",
+    "No mention of how folders are represented in .material_index.json",
+    "Missing error handling for network/WebDAV server failures and file corruption",
+    "No strategy for handling partial updates or large index files",
+    "Unclear how to maintain consistency between Core Data (iOS) and Hive (Flutter)",
+    "No mention of timezone handling (need to confirm UTC-only for timestamps)",
+    "Missing specs for file name encoding (non-ASCII characters)",
+    "No plan for app uninstall/reinstall state recovery"
+  ],
+  "suggestions": [
+    "Add a section on detecting NAS-side file changes (e.g., compare file_modified_at with index entries)",
+    "Consider using WebDAV locks or optimistic concurrency control for index updates",
+    "Specify index pagination or incremental sync for large collections",
+    "Add authentication method options (e.g., API keys, OAuth2 if supported by NAS)",
+    "Define a clear folder representation schema in .material_index.json",
+    "Add specs for cache management and cleanup strategies",
+    "Consider a shared serialization/validation library for iOS and Flutter to ensure consistency"
+  ]
+}

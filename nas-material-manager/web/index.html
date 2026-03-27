@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAS 素材管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --primary-light: rgba(0, 122, 255, 0.1);
+            --green: #34C759;
+            --green-light: rgba(52, 199, 89, 0.15);
+            --orange: #FF9500;
+            --orange-light: rgba(255, 149, 0, 0.15);
+            --red: #FF3B30;
+            --red-light: rgba(255, 59, 48, 0.15);
+            --blue: #007AFF;
+            --blue-light: rgba(0, 122, 255, 0.15);
+            --bg: #F5F5F7;
+            --card-bg: #FFFFFF;
+            --sidebar-bg: #EBEBED;
+            --text: #1D1D1F;
+            --text-secondary: #86868B;
+            --border: #D2D2D7;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #000000;
+                --card-bg: #1C1C1E;
+                --sidebar-bg: #121214;
+                --text: #FFFFFF;
+                --text-secondary: #98989D;
+                --border: #38383A;
+            }
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Login Screen */
+        .login-screen {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-icon {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .login-icon svg {
+            width: 80px;
+            height: 80px;
+            color: var(--primary);
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+        }
+
+        .login-btn, .add-user-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .login-btn:hover, .add-user-btn:hover {
+            opacity: 0.9;
+        }
+
+        /* Main App with Sidebar */
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-title {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar-title svg {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .sidebar-section {
+            padding: 12px 0;
+        }
+
+        .sidebar-section-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 16px;
+        }
+
+        .user-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .user-item:hover {
+            background: var(--card-bg);
+        }
+
+        .user-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .add-user-section {
+            padding: 8px 16px;
+            margin-top: auto;
+            border-top: 1px solid var(--border);
+        }
+
+        .folder-item {
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .folder-item:hover {
+            background: var(--card-bg);
+        }
+
+        .folder-item.active {
+            background: var(--primary-light);
+            color: var(--primary);
+        }
+
+        .folder-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--primary);
+        }
+
+        .folder-icon.purple {
+            color: #AF52DE;
+        }
+
+        .folder-icon.red {
+            color: #FF3B30;
+        }
+
+        .folder-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .folder-count {
+            margin-left: auto;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .content-header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content-title {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb-current {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            padding: 8px 12px;
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: var(--primary-light);
+        }
+
+        .content-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        /* Material Grid */
+        .material-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 16px;
+        }
+
+        .material-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 1px solid var(--border);
+        }
+
+        .material-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .material-thumbnail {
+            aspect-ratio: 1;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .material-thumbnail svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-secondary);
+        }
+
+        .material-info {
+            padding: 12px;
+        }
+
+        .material-name {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .material-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .tag-usage-unused {
+            background: var(--orange-light);
+            color: var(--orange);
+        }
+
+        .tag-usage-used {
+            background: var(--green-light);
+            color: var(--green);
+        }
+
+        .tag-viral-not {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+
+        .tag-viral-yes {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s, visibility 0.2s;
+        }
+
+        .modal-overlay.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--card-bg);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.95);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.visible .modal {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--bg);
+        }
+
+        .modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .detail-thumbnail {
+            aspect-ratio: 1;
+            background: var(--bg);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+        }
+
+        .detail-thumbnail svg {
+            width: 80px;
+            height: 80px;
+            color: var(--text-secondary);
+        }
+
+        .detail-group {
+            margin-bottom: 20px;
+        }
+
+        .detail-group-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .detail-input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .detail-input:focus {
+            border-color: var(--primary);
+        }
+
+        textarea.detail-input {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .segmented-control {
+            display: flex;
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 4px;
+            gap: 4px;
+        }
+
+        .segment-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .segment-btn.active {
+            background: var(--card-bg);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .file-info {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .file-info p {
+            margin-bottom: 4px;
+        }
+
+        .modal-footer {
+            padding: 16px 20px;
+            border-top: 1px hidden;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Upload Styles */
+        .upload-section {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .upload-btn:hover {
+            opacity: 0.9;
+        }
+
+        .upload-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            margin: 16px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-zone.drag-over {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .upload-zone-icon {
+            width: 48px;
+            height: 48px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .upload-zone-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Copy Button */
+        .copy-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .copy-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        .copy-btn {
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 600;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background: var(--border);
+        }
+
+        .copy-btn.copied {
+            background: var(--green-light);
+            color: var(--green);
+            border-color: var(--green);
+        }
+
+        .copy-btn svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Video Player */
+        .video-player {
+            width: 100%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-player video {
+            width: 100%;
+            display: block;
+        }
+
+        .play-btn-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .play-btn-overlay:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .play-btn-overlay svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+            margin-left: 4px;
+        }
+
+        .detail-thumbnail {
+            position: relative;
+        }
+
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .download-btn:hover {
+            opacity: 0.9;
+        }
+
+        .download-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .video-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        .copy-to-user-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .copy-to-user-btn:hover {
+            background: var(--border);
+        }
+
+        .copy-to-user-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .copy-user-modal {
+            max-width: 400px;
+        }
+
+        .copy-user-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .copy-user-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .copy-user-item:hover {
+            background: var(--bg);
+        }
+
+        .copy-user-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .copy-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .copy-user-info {
+            flex: 1;
+        }
+
+        .copy-user-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .copy-user-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .copy-folder-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        /* Selection & Batch Operations */
+        .batch-actions-bar {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .batch-actions-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .batch-actions-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .select-all-btn {
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .select-all-btn:hover {
+            background: var(--border);
+        }
+
+        .selected-count {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .batch-btn {
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .batch-btn:hover {
+            opacity: 0.9;
+        }
+
+        .batch-btn-danger {
+            background: var(--red-light);
+            color: var(--red);
+        }
+
+        .batch-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .batch-btn-secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .batch-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .material-card {
+            position: relative;
+        }
+
+        .material-card.selectable {
+            cursor: pointer;
+        }
+
+        .material-card.selected {
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .select-checkbox {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            transition: all 0.2s;
+        }
+
+        .material-card.selected .select-checkbox {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .select-checkbox svg {
+            width: 14px;
+            height: 14px;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .material-card.selected .select-checkbox svg {
+            opacity: 1;
+        }
+
+        .material-card .select-checkbox {
+            opacity: 0;
+        }
+
+        .material-card:hover .select-checkbox,
+        .material-card.selected .select-checkbox {
+            opacity: 1;
+        }
+
+        .toggle-select-mode-btn {
+            padding: 8px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-select-mode-btn:hover {
+            background: var(--border);
+        }
+
+        .toggle-select-mode-btn.active {
+            background: var(--primary-light);
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        const UsageTag = {
+            unused: { rawValue: 'unused', displayName: '未使用', color: 'orange' },
+            used: { rawValue: 'used', displayName: '使用过', color: 'green' }
+        };
+
+        const ViralTag = {
+            notViral: { rawValue: 'not_viral', displayName: '未爆', color: 'blue' },
+            viral: { rawValue: 'viral', displayName: '爆款', color: 'red' }
+        };
+
+        function generateId() {
+            return Math.random().toString(36).substring(2, 15);
+        }
+
+        function formatSize(bytes) {
+            if (!bytes) return '';
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+            return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+        }
+
+        const state = {
+            isLoggedIn: true,
+            currentUser: null,
+            currentFolder: 'images',
+            users: [
+                { id: 'user1', name: '张三' },
+                { id: 'user2', name: '李四' },
+                { id: 'user3', name: '王五' }
+            ],
+            materialsByUser: {},
+            selectedMaterial: null,
+            showAddUserModal: false,
+            showCopyUserModal: false,
+            isSelectMode: false,
+            selectedMaterialIds: new Set(),
+            showBatchMoveModal: false
+        };
+
+        function isImageFile(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return ['jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp'].includes(ext);
+        }
+
+        function isVideoFile(filename) {
+            const ext = filename.split('.').pop().toLowerCase();
+            return ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv'].includes(ext);
+        }
+
+        function addMaterialToCurrentFolder(material) {
+            if (!state.currentUser) return;
+            const userMaterials = state.materialsByUser[state.currentUser.id];
+            if (!userMaterials) return;
+            userMaterials[state.currentFolder].unshift(material);
+        }
+
+        function handleFileUpload(file) {
+            if (!state.currentUser) return;
+
+            const isVideo = isVideoFile(file.name);
+            const isImage = isImageFile(file.name);
+
+            // 检查文件类型是否匹配当前文件夹
+            if (state.currentFolder === 'images' && !isImage) {
+                alert('请在「图片」文件夹中上传图片文件');
+                return;
+            }
+            if (state.currentFolder === 'videos' && !isVideo) {
+                alert('请在「视频」文件夹中上传视频文件');
+                return;
+            }
+
+            const newMaterial = {
+                id: generateId(),
+                filename: file.name,
+                title: null,
+                description: null,
+                usageTag: 'unused',
+                viralTag: 'notViral',
+                fileSize: file.size,
+                isVideo: isVideo,
+                userId: state.currentUser.id
+            };
+
+            addMaterialToCurrentFolder(newMaterial);
+            render();
+        }
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                handleFileUpload(file);
+            });
+        }
+
+        function copyMaterialToUser(material, targetUserId) {
+            const targetMaterials = state.materialsByUser[targetUserId];
+            if (!targetMaterials) return;
+
+            const folderType = material.isVideo ? 'videos' : 'images';
+            const newMaterial = {
+                ...material,
+                id: generateId(),
+                userId: targetUserId,
+                usageTag: 'unused',
+                viralTag: 'notViral'
+            };
+
+            targetMaterials[folderType].unshift(newMaterial);
+        }
+
+        function getSelectedMaterials() {
+            const materials = getCurrentMaterials();
+            return materials.filter(m => state.selectedMaterialIds.has(m.id));
+        }
+
+        function batchDelete() {
+            if (!state.currentUser || state.selectedMaterialIds.size === 0) return;
+
+            const userMaterials = state.materialsByUser[state.currentUser.id];
+            if (!userMaterials) return;
+
+            userMaterials[state.currentFolder] = userMaterials[state.currentFolder].filter(
+                m => !state.selectedMaterialIds.has(m.id)
+            );
+
+            state.selectedMaterialIds.clear();
+            state.isSelectMode = false;
+        }
+
+        function batchCopyToUser(targetUserId) {
+            if (state.selectedMaterialIds.size === 0) return;
+
+            const selectedMaterials = getSelectedMaterials();
+            selectedMaterials.forEach(m => {
+                copyMaterialToUser(m, targetUserId);
+            });
+
+            state.selectedMaterialIds.clear();
+            state.isSelectMode = false;
+            state.showCopyUserModal = false;
+        }
+
+        function batchMoveToUser(targetUserId) {
+            if (!state.currentUser || state.selectedMaterialIds.size === 0) return;
+            if (targetUserId === state.currentUser.id) return;
+
+            const selectedMaterials = getSelectedMaterials();
+            const targetMaterials = state.materialsByUser[targetUserId];
+            if (!targetMaterials) return;
+
+            // Remove from current user's folder
+            const currentUserMaterials = state.materialsByUser[state.currentUser.id];
+            currentUserMaterials[state.currentFolder] = currentUserMaterials[state.currentFolder].filter(
+                m => !state.selectedMaterialIds.has(m.id)
+            );
+
+            // Add to target user's corresponding folder
+            selectedMaterials.forEach(m => {
+                const movedMaterial = {
+                    ...m,
+                    id: generateId(),
+                    userId: targetUserId,
+                    usageTag: 'unused',
+                    viralTag: 'notViral'
+                };
+                const folderType = m.isVideo ? 'videos' : 'images';
+                targetMaterials[folderType].unshift(movedMaterial);
+            });
+
+            state.selectedMaterialIds.clear();
+            state.isSelectMode = false;
+            state.showBatchMoveModal = false;
+        }
+
+        function initSampleData() {
+            state.users.forEach(user => {
+                state.materialsByUser[user.id] = {
+                    images: generateSampleMaterials(user.id, 'images'),
+                    videos: generateSampleMaterials(user.id, 'videos')
+                };
+            });
+            state.currentUser = state.users[0];
+        }
+
+        function generateSampleMaterials(userId, folderType) {
+            const baseMaterials = folderType === 'images' ? [
+                { filename: '海滩日落.jpg', title: '三亚海滩日落', description: '美丽的海滩日落风景', usageTag: 'used', viralTag: 'viral', fileSize: 2150400, isVideo: false },
+                { filename: '城市夜景.png', title: '上海陆家嘴夜景', description: null, usageTag: 'unused', viralTag: 'notViral', fileSize: 3145728, isVideo: false },
+                { filename: '美食照片.jpg', title: null, description: null, usageTag: 'unused', viralTag: 'notViral', fileSize: 1536000, isVideo: false },
+                { filename: '产品图.jpg', title: '产品展示图', description: '电商产品主图', usageTag: 'used', viralTag: 'viral', fileSize: 827392, isVideo: false }
+            ] : [
+                { filename: '宣传片.mp4', title: '企业宣传片', description: '公司年度宣传片', usageTag: 'used', viralTag: 'notViral', fileSize: 256897234, isVideo: true },
+                { filename: '城市夜景.mp4', title: '上海陆家嘴夜景', description: '无人机拍摄', usageTag: 'unused', viralTag: 'notViral', fileSize: 104857600, isVideo: true }
+            ];
+
+            return baseMaterials.map(m => ({
+                id: generateId(),
+                ...m,
+                userId: userId
+            }));
+        }
+
+        function getCurrentMaterials() {
+            if (!state.currentUser) return [];
+            const userMaterials = state.materialsByUser[state.currentUser.id];
+            if (!userMaterials) return [];
+            return userMaterials[state.currentFolder] || [];
+        }
+
+        function updateMaterial(updated) {
+            if (!state.currentUser) return;
+            const userMaterials = state.materialsByUser[state.currentUser.id];
+            if (!userMaterials) return;
+            const materials = userMaterials[state.currentFolder];
+            if (!materials) return;
+            const index = materials.findIndex(m => m.id === updated.id);
+            if (index !== -1) {
+                materials[index] = updated;
+            }
+        }
+
+        const icons = {
+            folder: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>`,
+            photo: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`,
+            video: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>`,
+            settings: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.14 12.94c.04-.31.06-.63.06-.94 0-.31-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>`,
+            close: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`,
+            user: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>`,
+            imageFolder: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>`,
+            videoFolder: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>`,
+            add: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>`
+        };
+
+        function render() {
+            const app = document.getElementById('app');
+            app.innerHTML = renderMain();
+            attachEventListeners();
+        }
+
+        function renderMain() {
+            const currentMaterials = getCurrentMaterials();
+            const imageCount = state.currentUser ? (state.materialsByUser[state.currentUser.id]?.images?.length || 0) : 0;
+            const videoCount = state.currentUser ? (state.materialsByUser[state.currentUser.id]?.videos?.length || 0) : 0;
+
+            return `
+                <div class="app-layout">
+                    <aside class="sidebar">
+                        <div class="sidebar-header">
+                            <div class="sidebar-title">
+                                ${icons.folder}
+                                NAS 素材管理
+                            </div>
+                        </div>
+
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title">注册用户</div>
+                            ${state.users.map(u => `
+                                <div class="user-item ${state.currentUser?.id === u.id ? 'active' : ''}" data-user-id="${u.id}">
+                                    <div class="user-avatar">${u.name.charAt(0)}</div>
+                                    <span class="user-name">${u.name}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${state.currentUser ? `
+                        <div class="sidebar-section">
+                            <div class="sidebar-section-title">存储空间</div>
+                            <div class="folder-item ${state.currentFolder === 'images' ? 'active' : ''}" data-folder="images">
+                                <span class="folder-icon purple">${icons.imageFolder}</span>
+                                <span class="folder-name">图片</span>
+                                <span class="folder-count">${imageCount}</span>
+                            </div>
+                            <div class="folder-item ${state.currentFolder === 'videos' ? 'active' : ''}" data-folder="videos">
+                                <span class="folder-icon red">${icons.videoFolder}</span>
+                                <span class="folder-name">视频</span>
+                                <span class="folder-count">${videoCount}</span>
+                            </div>
+                        </div>
+                        ` : ''}
+
+                        <div class="add-user-section">
+                            <button class="add-user-btn" id="addUserBtn">
+                                ${icons.add} 添加用户
+                            </button>
+                        </div>
+                    </aside>
+
+                    <main class="main-content">
+                        <header class="content-header">
+                            <div>
+                                <div class="breadcrumb">
+                                    <span>${state.currentUser?.name || ''}</span>
+                                    <span>/</span>
+                                    <span class="breadcrumb-current">${state.currentFolder === 'images' ? '图片' : '视频'}</span>
+                                </div>
+                            </div>
+                            <button class="toggle-select-mode-btn ${state.isSelectMode ? 'active' : ''}" id="toggleSelectMode">
+                                ${state.isSelectMode ? '取消选择' : '选择'}
+                            </button>
+                        </header>
+
+                        ${state.isSelectMode ? `
+                            <div class="batch-actions-bar">
+                                <div class="batch-actions-left">
+                                    <button class="select-all-btn" id="selectAllBtn">
+                                        ${state.selectedMaterialIds.size === currentMaterials.length ? '取消全选' : '全选'}
+                                    </button>
+                                    <span class="selected-count">已选择 ${state.selectedMaterialIds.size} 项</span>
+                                </div>
+                                <div class="batch-actions-right">
+                                    <button class="batch-btn batch-btn-danger" id="batchDeleteBtn">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                                        删除
+                                    </button>
+                                    <button class="batch-btn batch-btn-secondary" id="batchCopyBtn">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                                        复制给用户
+                                    </button>
+                                    <button class="batch-btn batch-btn-secondary" id="batchMoveBtn">
+                                        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"/></svg>
+                                        移动给用户
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="upload-section">
+                                <div></div>
+                                <button class="upload-btn" id="uploadBtn">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+                                    上传${state.currentFolder === 'images' ? '图片' : '视频'}
+                                </button>
+                                <input type="file" class="upload-input" id="uploadInput" multiple accept="${state.currentFolder === 'images' ? 'image/*' : 'video/*'}">
+                            </div>
+                            <div class="upload-zone" id="uploadZone">
+                                <svg class="upload-zone-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+                                <div class="upload-zone-text">
+                                    拖拽文件到此处上传，或点击上方按钮<br>
+                                    支持 ${state.currentFolder === 'images' ? 'JPG、PNG、GIF' : 'MP4、MOV、AVI'} 格式
+                                </div>
+                            </div>
+                        `}
+
+                        <div class="content-body">
+                            ${currentMaterials.length === 0 ? renderEmptyState() : renderMaterialGrid(currentMaterials)}
+                        </div>
+                    </main>
+                </div>
+                ${renderDetailModal()}
+                ${renderCopyUserModal()}
+                ${renderBatchMoveModal()}
+            `;
+        }
+
+        function renderEmptyState() {
+            return `
+                <div class="empty-state">
+                    ${icons.photo}
+                    <p>暂无素材</p>
+                </div>
+            `;
+        }
+
+        function renderMaterialGrid(materials) {
+            return `
+                <div class="material-grid">
+                    ${materials.map(m => renderMaterialCard(m)).join('')}
+                </div>
+            `;
+        }
+
+        function renderMaterialCard(m) {
+            const usageClass = m.usageTag === 'unused' ? 'tag-usage-unused' : 'tag-usage-used';
+            const viralClass = m.viralTag === 'notViral' ? 'tag-viral-not' : 'tag-viral-yes';
+            const displayTitle = m.title || m.filename;
+            const isSelected = state.selectedMaterialIds.has(m.id);
+            const checkIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+
+            return `
+                <div class="material-card ${state.isSelectMode ? 'selectable' : ''} ${isSelected ? 'selected' : ''}" data-material-id="${m.id}">
+                    ${state.isSelectMode ? `
+                        <div class="select-checkbox">
+                            ${checkIcon}
+                        </div>
+                    ` : ''}
+                    <div class="material-thumbnail">
+                        ${m.isVideo ? icons.video : icons.photo}
+                    </div>
+                    <div class="material-info">
+                        <div class="material-name">${escapeHtml(displayTitle)}</div>
+                        <div class="material-tags">
+                            <span class="tag ${usageClass}">${UsageTag[m.usageTag].displayName}</span>
+                            <span class="tag ${viralClass}">${ViralTag[m.viralTag].displayName}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCopyUserModal() {
+            if (!state.showCopyUserModal) {
+                return '<div class="modal-overlay" id="copyUserModalOverlay"></div>';
+            }
+
+            const selectedMaterials = getSelectedMaterials();
+            const count = selectedMaterials.length;
+            if (count === 0) {
+                return '<div class="modal-overlay" id="copyUserModalOverlay"></div>';
+            }
+
+            const isVideo = selectedMaterials[0].isVideo;
+            const folderLabel = isVideo ? '视频' : '图片';
+            const otherUsers = state.users.filter(u => u.id !== state.currentUser?.id);
+
+            return `
+                <div class="modal-overlay visible" id="copyUserModalOverlay">
+                    <div class="modal copy-user-modal">
+                        <div class="modal-header">
+                            <span class="modal-title">复制给其他用户</span>
+                            <button class="modal-close" id="closeCopyUserModal">${icons.close}</button>
+                        </div>
+                        <div class="modal-body">
+                            <p style="margin-bottom:16px;color:var(--text-secondary);font-size:14px;">
+                                将 <strong>${count} 个素材</strong> 复制到以下用户的<strong>${folderLabel}</strong>文件夹：
+                            </p>
+                            <div class="copy-user-list">
+                                ${otherUsers.map(u => `
+                                    <div class="copy-user-item" data-user-id="${u.id}">
+                                        <div class="copy-user-avatar">${u.name.charAt(0)}</div>
+                                        <div class="copy-user-info">
+                                            <div class="copy-user-name">${u.name}</div>
+                                            <div class="copy-user-desc">复制到「${folderLabel}」文件夹</div>
+                                        </div>
+                                        <span class="copy-folder-badge">${folderLabel}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderBatchMoveModal() {
+            if (!state.showBatchMoveModal || !state.currentUser) {
+                return '<div class="modal-overlay" id="batchMoveModalOverlay"></div>';
+            }
+
+            const selectedMaterials = getSelectedMaterials();
+            const count = selectedMaterials.length;
+            if (count === 0) {
+                return '<div class="modal-overlay" id="batchMoveModalOverlay"></div>';
+            }
+
+            const isVideo = selectedMaterials[0].isVideo;
+            const folderLabel = isVideo ? '视频' : '图片';
+            const otherUsers = state.users.filter(u => u.id !== state.currentUser?.id);
+
+            return `
+                <div class="modal-overlay visible" id="batchMoveModalOverlay">
+                    <div class="modal copy-user-modal">
+                        <div class="modal-header">
+                            <span class="modal-title">移动给其他用户</span>
+                            <button class="modal-close" id="closeBatchMoveModal">${icons.close}</button>
+                        </div>
+                        <div class="modal-body">
+                            <p style="margin-bottom:16px;color:var(--text-secondary);font-size:14px;">
+                                将 <strong>${count} 个素材</strong> 移动到以下用户的<strong>${folderLabel}</strong>文件夹：
+                            </p>
+                            <div class="copy-user-list">
+                                ${otherUsers.map(u => `
+                                    <div class="copy-user-item" data-user-id="${u.id}">
+                                        <div class="copy-user-avatar">${u.name.charAt(0)}</div>
+                                        <div class="copy-user-info">
+                                            <div class="copy-user-name">${u.name}</div>
+                                            <div class="copy-user-desc">移动到「${folderLabel}」文件夹</div>
+                                        </div>
+                                        <span class="copy-folder-badge">${folderLabel}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDetailModal() {
+            const m = state.selectedMaterial;
+            if (!m) {
+                return '<div class="modal-overlay" id="modalOverlay"></div>';
+            }
+
+            const copyIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+            const checkIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+            const playIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+            const downloadIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>';
+
+            return `
+                <div class="modal-overlay visible" id="modalOverlay">
+                    <div class="modal">
+                        <div class="modal-header">
+                            <span class="modal-title">素材详情</span>
+                            <button class="modal-close" id="closeModal">${icons.close}</button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="detail-thumbnail">
+                                ${m.isVideo ? `
+                                    <div class="video-player" id="videoPlayerContainer">
+                                        <div style="position:relative;width:100%;aspect-ratio:16/9;background:#000;display:flex;align-items:center;justify-content:center;">
+                                            ${icons.video}
+                                            <div class="play-btn-overlay" id="playVideoBtn">
+                                                ${playIcon}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="video-actions">
+                                        <button class="download-btn" id="downloadBtn">
+                                            ${downloadIcon} 下载视频
+                                        </button>
+                                    </div>
+                                ` : `
+                                    ${icons.photo}
+                                    <div class="video-actions">
+                                        <button class="download-btn" id="downloadBtn">
+                                            ${downloadIcon} 下载图片
+                                        </button>
+                                    </div>
+                                `}
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="detail-group-title">基本信息</div>
+                                <div class="copy-row">
+                                    <div class="copy-input-wrapper">
+                                        <input type="text" class="detail-input" id="detailTitle" placeholder="标题" value="${escapeAttr(m.title || '')}">
+                                    </div>
+                                    <button class="copy-btn" data-copy-target="detailTitle" data-copy-text="${escapeAttr(m.title || '')}">
+                                        ${copyIcon} 复制
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="copy-row">
+                                    <div class="copy-input-wrapper">
+                                        <textarea class="detail-input" id="detailDesc" placeholder="描述">${escapeHtml(m.description || '')}</textarea>
+                                    </div>
+                                    <button class="copy-btn" data-copy-target="detailDesc" data-copy-text="${escapeAttr(m.description || '')}">
+                                        ${copyIcon} 复制
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="detail-group-title">使用状态</div>
+                                <div class="segmented-control">
+                                    <button class="segment-btn ${m.usageTag === 'unused' ? 'active' : ''}" data-usage="unused">未使用</button>
+                                    <button class="segment-btn ${m.usageTag === 'used' ? 'active' : ''}" data-usage="used">使用过</button>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="detail-group-title">爆款标签</div>
+                                <div class="segmented-control">
+                                    <button class="segment-btn ${m.viralTag === 'notViral' ? 'active' : ''}" data-viral="notViral">未爆</button>
+                                    <button class="segment-btn ${m.viralTag === 'viral' ? 'active' : ''}" data-viral="viral">爆款</button>
+                                </div>
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="file-info">
+                                    <p><strong>文件名:</strong> ${escapeHtml(m.filename)}</p>
+                                    ${m.fileSize ? `<p><strong>大小:</strong> ${formatSize(m.fileSize)}</p>` : ''}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" id="cancelDetail">取消</button>
+                            <button class="btn btn-primary" id="saveDetail">保存</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function escapeAttr(str) {
+            return str.replace(/"/g, '&quot;');
+        }
+
+        function attachEventListeners() {
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const userId = item.dataset.userId;
+                    state.currentUser = state.users.find(u => u.id === userId);
+                    state.currentFolder = 'images';
+                    state.isSelectMode = false;
+                    state.selectedMaterialIds.clear();
+                    render();
+                });
+            });
+
+            document.querySelectorAll('.folder-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    state.currentFolder = item.dataset.folder;
+                    state.isSelectMode = false;
+                    state.selectedMaterialIds.clear();
+                    render();
+                });
+            });
+
+            document.querySelectorAll('.material-card').forEach(card => {
+                card.addEventListener('click', (e) => {
+                    const id = card.dataset.materialId;
+                    if (state.isSelectMode) {
+                        if (state.selectedMaterialIds.has(id)) {
+                            state.selectedMaterialIds.delete(id);
+                        } else {
+                            state.selectedMaterialIds.add(id);
+                        }
+                        render();
+                    } else {
+                        const materials = getCurrentMaterials();
+                        state.selectedMaterial = materials.find(m => m.id === id);
+                        render();
+                    }
+                });
+            });
+
+            document.getElementById('closeModal')?.addEventListener('click', closeModal);
+            document.getElementById('cancelDetail')?.addEventListener('click', closeModal);
+            document.getElementById('modalOverlay')?.addEventListener('click', (e) => {
+                if (e.target.id === 'modalOverlay') closeModal();
+            });
+
+            document.querySelectorAll('[data-usage]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.selectedMaterial.usageTag = btn.dataset.usage;
+                    render();
+                });
+            });
+
+            document.querySelectorAll('[data-viral]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    state.selectedMaterial.viralTag = btn.dataset.viral;
+                    render();
+                });
+            });
+
+            document.getElementById('saveDetail')?.addEventListener('click', handleSaveDetail);
+
+            // Toggle select mode
+            document.getElementById('toggleSelectMode')?.addEventListener('click', () => {
+                state.isSelectMode = !state.isSelectMode;
+                state.selectedMaterialIds.clear();
+                render();
+            });
+
+            // Select all / deselect all
+            document.getElementById('selectAllBtn')?.addEventListener('click', () => {
+                const materials = getCurrentMaterials();
+                const allSelected = state.selectedMaterialIds.size === materials.length;
+                if (allSelected) {
+                    state.selectedMaterialIds.clear();
+                } else {
+                    materials.forEach(m => state.selectedMaterialIds.add(m.id));
+                }
+                render();
+            });
+
+            // Batch delete
+            document.getElementById('batchDeleteBtn')?.addEventListener('click', () => {
+                if (state.selectedMaterialIds.size === 0) return;
+                if (confirm(`确定要删除 ${state.selectedMaterialIds.size} 个素材吗？`)) {
+                    batchDelete();
+                    render();
+                }
+            });
+
+            // Batch copy to user
+            document.getElementById('batchCopyBtn')?.addEventListener('click', () => {
+                if (state.selectedMaterialIds.size === 0) return;
+                state.showCopyUserModal = true;
+                render();
+            });
+
+            // Batch move to folder
+            document.getElementById('batchMoveBtn')?.addEventListener('click', () => {
+                if (state.selectedMaterialIds.size === 0) return;
+                state.showBatchMoveModal = true;
+                render();
+            });
+
+            // Upload functionality
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadInput = document.getElementById('uploadInput');
+            const uploadZone = document.getElementById('uploadZone');
+
+            uploadBtn?.addEventListener('click', () => {
+                uploadInput?.click();
+            });
+
+            uploadInput?.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                    handleFiles(e.target.files);
+                }
+            });
+
+            uploadZone?.addEventListener('click', () => {
+                uploadInput?.click();
+            });
+
+            uploadZone?.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadZone?.classList.add('drag-over');
+            });
+
+            uploadZone?.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadZone?.classList.remove('drag-over');
+            });
+
+            uploadZone?.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadZone?.classList.remove('drag-over');
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+
+            // Copy buttons functionality
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const targetId = btn.dataset.copyTarget;
+                    let text = btn.dataset.copyText || '';
+
+                    if (!text && targetId) {
+                        const input = document.getElementById(targetId);
+                        if (input) {
+                            text = input.value;
+                        }
+                    }
+
+                    if (text) {
+                        try {
+                            await navigator.clipboard.writeText(text);
+                            const checkIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>';
+                            btn.innerHTML = checkIcon + ' 已复制';
+                            btn.classList.add('copied');
+
+                            setTimeout(() => {
+                                const copyIcon = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>';
+                                btn.innerHTML = copyIcon + ' 复制';
+                                btn.classList.remove('copied');
+                            }, 2000);
+                        } catch (err) {
+                            console.error('Failed to copy:', err);
+                        }
+                    }
+                });
+            });
+
+            // Video play functionality
+            const playVideoBtn = document.getElementById('playVideoBtn');
+            if (playVideoBtn && state.selectedMaterial?.isVideo) {
+                playVideoBtn.addEventListener('click', () => {
+                    const container = document.getElementById('videoPlayerContainer');
+                    if (container) {
+                        container.innerHTML = `
+                            <video controls autoplay style="width:100%;aspect-ratio:16/9;background:#000;">
+                                <source src="" type="video/mp4">
+                                您的浏览器不支持视频播放，请下载后观看。
+                            </video>
+                            <p style="text-align:center;color:var(--text-secondary);padding:16px;font-size:14px;">
+                                演示模式：实际使用时会从 NAS 加载视频文件
+                            </p>
+                        `;
+                    }
+                });
+            }
+
+            // Download functionality
+            const downloadBtn = document.getElementById('downloadBtn');
+            if (downloadBtn && state.selectedMaterial) {
+                downloadBtn.addEventListener('click', () => {
+                    const m = state.selectedMaterial;
+                    const demoContent = `这是一个演示文件：${m.filename}\n\n在实际使用中，这里会从 NAS WebDAV 下载真实的文件内容。`;
+                    const blob = new Blob([demoContent], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = m.filename;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                });
+            }
+
+            // Close copy user modal
+            document.getElementById('closeCopyUserModal')?.addEventListener('click', () => {
+                state.showCopyUserModal = false;
+                render();
+            });
+
+            document.getElementById('copyUserModalOverlay')?.addEventListener('click', (e) => {
+                if (e.target.id === 'copyUserModalOverlay') {
+                    state.showCopyUserModal = false;
+                    render();
+                }
+            });
+
+            // Select target user for batch copy
+            document.querySelectorAll('#copyUserModalOverlay .copy-user-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetUserId = item.dataset.userId;
+                    if (targetUserId && state.selectedMaterialIds.size > 0) {
+                        batchCopyToUser(targetUserId);
+                        alert(`已成功复制 ${state.selectedMaterialIds.size} 个素材给 ${state.users.find(u => u.id === targetUserId)?.name}！`);
+                        render();
+                    }
+                });
+            });
+
+            // Close batch move modal
+            document.getElementById('closeBatchMoveModal')?.addEventListener('click', () => {
+                state.showBatchMoveModal = false;
+                render();
+            });
+
+            document.getElementById('batchMoveModalOverlay')?.addEventListener('click', (e) => {
+                if (e.target.id === 'batchMoveModalOverlay') {
+                    state.showBatchMoveModal = false;
+                    render();
+                }
+            });
+
+            // Select target user for batch move
+            document.querySelectorAll('#batchMoveModalOverlay .copy-user-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetUserId = item.dataset.userId;
+                    if (targetUserId && state.selectedMaterialIds.size > 0) {
+                        batchMoveToUser(targetUserId);
+                        alert(`已成功移动 ${state.selectedMaterialIds.size} 个素材给 ${state.users.find(u => u.id === targetUserId)?.name}！`);
+                        render();
+                    }
+                });
+            });
+        }
+
+        function closeModal() {
+            state.selectedMaterial = null;
+            render();
+        }
+
+        function handleSaveDetail() {
+            const m = state.selectedMaterial;
+            const title = document.getElementById('detailTitle').value;
+            const desc = document.getElementById('detailDesc').value;
+
+            const updated = {
+                ...m,
+                title: title.trim() || null,
+                description: desc.trim() || null
+            };
+
+            updateMaterial(updated);
+            closeModal();
+        }
+
+        initSampleData();
+        render();
+    </script>
+</body>
+</html>
