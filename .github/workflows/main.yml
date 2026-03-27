@@ -16,7 +16,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cd nas-material-manager/nas-材料管理器
+          # 自动扫描并找到 pubspec.yaml 所在的项目目录
+          PROJECT_DIR=$(find . -name "pubspec.yaml" -type f -exec dirname {} \;)
+          echo "✅ 找到项目目录: $PROJECT_DIR"
+          # 进入项目目录并安装依赖
+          cd "$PROJECT_DIR"
           flutter pub get
           cd ios
           pod repo update
@@ -24,11 +28,12 @@ jobs:
 
       - name: Build iOS
         run: |
-          cd nas-material-manager/nas-材料管理器
+          PROJECT_DIR=$(find . -name "pubspec.yaml" -type f -exec dirname {} \;)
+          cd "$PROJECT_DIR"
           flutter build ios --release --no-codesign
 
       - name: Upload iOS App
         uses: actions/upload-artifact@v4
         with:
           name: ios-app
-          path: nas-material-manager/nas-材料管理器/build/ios/iphoneos/
+          path: ${{ env.PROJECT_DIR }}/build/ios/iphoneos/
