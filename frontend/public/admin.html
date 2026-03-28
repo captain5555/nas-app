@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理后台 - NAS 素材管理系统</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <h2>管理后台</h2>
+            <nav class="sidebar-nav">
+                <button class="sidebar-item active" data-page="dashboard">仪表盘</button>
+                <button class="sidebar-item" data-page="users">用户管理</button>
+                <button class="sidebar-item" data-page="materials">素材管理</button>
+                <button class="sidebar-item" data-page="logs">操作日志</button>
+                <button class="sidebar-item" data-page="backups">备份管理</button>
+            </nav>
+            <div class="sidebar-bottom">
+                <a href="/" class="btn-link">返回前台</a>
+            </div>
+        </aside>
+
+        <!-- Main content -->
+        <main class="admin-main">
+            <!-- Header -->
+            <header class="admin-header">
+                <h1 id="page-title">仪表盘</h1>
+                <div class="header-right">
+                    <span id="user-info"></span>
+                    <button id="logout-btn">退出</button>
+                </div>
+            </header>
+
+            <!-- Page content -->
+            <div id="page-content" class="page-content">
+                <!-- Dashboard page -->
+                <div id="dashboard-page" class="admin-page">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <h3>用户数</h3>
+                            <p class="stat-number" id="stat-users">-</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>素材数</h3>
+                            <p class="stat-number" id="stat-files">-</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>存储使用</h3>
+                            <p class="stat-number" id="stat-storage">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users page -->
+                <div id="users-page" class="admin-page hidden">
+                    <div class="page-toolbar">
+                        <button id="add-user-btn">添加用户</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>用户名</th>
+                                <th>角色</th>
+                                <th>创建时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-tbody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Materials page -->
+                <div id="materials-page" class="admin-page hidden">
+                    <div class="page-toolbar">
+                        <select id="filter-user">
+                            <option value="">所有用户</option>
+                        </select>
+                    </div>
+                    <div id="admin-materials-grid" class="materials-grid"></div>
+                </div>
+
+                <!-- Logs page -->
+                <div id="logs-page" class="admin-page hidden">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>时间</th>
+                                <th>用户</th>
+                                <th>操作</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody"></tbody>
+                    </table>
+                </div>
+
+                <!-- Backups page -->
+                <div id="backups-page" class="admin-page hidden">
+                    <div class="page-toolbar">
+                        <button id="create-backup-btn">创建备份</button>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>备份时间</th>
+                                <th>大小</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="backups-tbody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal container -->
+    <div id="modal-container" class="modal hidden"></div>
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/components/Toast.js"></script>
+    <script src="js/components/Modal.js"></script>
+    <script src="js/pages/admin/dashboard.js"></script>
+    <script src="js/pages/admin/users.js"></script>
+    <script src="js/pages/admin/materials.js"></script>
+    <script src="js/pages/admin/logs.js"></script>
+    <script src="js/pages/admin/backups.js"></script>
+    <script src="js/admin-app.js"></script>
+</body>
+</html>

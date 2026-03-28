@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NAS 素材管理系统</title>
+    <link rel="stylesheet" href="css/common.css">
+    <link rel="stylesheet" href="css/user.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login page -->
+        <div id="login-page" class="page">
+            <div class="login-container">
+                <h1>NAS 素材管理系统</h1>
+                <form id="login-form">
+                    <input type="text" id="username" placeholder="用户名" required>
+                    <input type="password" id="password" placeholder="密码" required>
+                    <button type="submit">登录</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main app -->
+        <div id="main-app" class="page hidden">
+            <!-- Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <h1>素材管理</h1>
+                </div>
+                <div class="header-right">
+                    <span id="user-info"></span>
+                    <button id="logout-btn">退出</button>
+                </div>
+            </header>
+
+            <!-- Navigation -->
+            <nav class="app-nav">
+                <button class="nav-tab active" data-folder="images">图片</button>
+                <button class="nav-tab" data-folder="videos">视频</button>
+                <button class="nav-tab" data-folder="others">其他</button>
+                <button class="nav-tab" data-folder="trash">垃圾箱</button>
+            </nav>
+
+            <!-- Toolbar -->
+            <div class="toolbar">
+                <input type="file" id="file-upload" multiple style="display: none;">
+                <button id="upload-btn">上传</button>
+                <button id="select-mode-btn">选择</button>
+                <div id="batch-actions" class="hidden">
+                    <button id="batch-trash-btn">删除</button>
+                    <button id="cancel-select-btn">取消</button>
+                </div>
+            </div>
+
+            <!-- Materials grid -->
+            <main class="materials-container">
+                <div id="materials-grid" class="materials-grid"></div>
+                <div id="empty-state" class="empty-state hidden">
+                    <p>暂无素材</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal container -->
+    <div id="modal-container" class="modal hidden"></div>
+
+    <!-- Toast container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="js/api.js"></script>
+    <script src="js/state.js"></script>
+    <script src="js/components/Toast.js"></script>
+    <script src="js/components/Modal.js"></script>
+    <script src="js/components/MaterialCard.js"></script>
+    <script src="js/components/FileUploader.js"></script>
+    <script src="js/pages/user/login.js"></script>
+    <script src="js/pages/user/materials.js"></script>
+    <script src="js/pages/user/trash.js"></script>
+    <script src="js/user-app.js"></script>
+</body>
+</html>
