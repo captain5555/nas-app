@@ -17,7 +17,9 @@ function authenticateToken(req, res, next) {
     }
 
     try {
-      const user = await db.getUser(decoded.userId);
+      // Support both userId (new) and id (V2 compatibility) in token
+      const userId = decoded.userId || decoded.id;
+      const user = await db.getUser(userId);
       if (!user) {
         return sendError(res, 'User not found', 404);
       }

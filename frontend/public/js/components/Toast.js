@@ -1,4 +1,5 @@
-function showToast(message, type = 'info') {
+const Toast = {
+  show(message, type = 'info') {
     const container = document.getElementById('toast-container');
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -6,6 +7,7 @@ function showToast(message, type = 'info') {
     container.appendChild(toast);
 
     setTimeout(() => {
-        toast.remove();
+      toast.remove();
     }, 3000);
-}
+  }
+};

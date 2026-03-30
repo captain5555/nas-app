@@ -1,46 +1,41 @@
-function showModal(content, options = {}) {
+const Modal = {
+  show(options) {
     const container = document.getElementById('modal-container');
+    const { title, content, footer, onMount } = options;
+
     container.innerHTML = `
-        <div class="modal-content">
-            ${options.title ? `
-                <div class="modal-header">
-                    <h3>${options.title}</h3>
-                    <button class="modal-close">&times;</button>
-                </div>
-            ` : ''}
-            <div class="modal-body">${content}</div>
-            ${options.footer !== false ? `
-                <div class="modal-footer">
-                    ${options.footer || `
-                        <button class="modal-cancel secondary">取消</button>
-                        <button class="modal-confirm">确定</button>
-                    `}
-                </div>
-            ` : ''}
-        </div>
+      <div class="modal-content">
+        ${title ? `
+          <div class="modal-header">
+            <h3>${title}</h3>
+            <button class="modal-close">&times;</button>
+          </div>
+        ` : ''}
+        <div class="modal-body">${content}</div>
+        ${footer !== undefined ? `
+          <div class="modal-footer">${footer}</div>
+        ` : ''}
+      </div>
     `;
 
     container.classList.remove('hidden');
 
-    return new Promise((resolve) => {
-        const closeBtn = container.querySelector('.modal-close');
-        const cancelBtn = container.querySelector('.modal-cancel');
-        const confirmBtn = container.querySelector('.modal-confirm');
+    // Bind close events
+    const closeBtn = container.querySelector('.modal-close');
+    if (closeBtn) {
+      closeBtn.onclick = () => this.hide();
+    }
+    container.onclick = (e) => {
+      if (e.target === container) this.hide();
+    };
 
-        const close = (result) => {
-            container.classList.add('hidden');
-            resolve(result);
-        };
+    // Call onMount callback if provided
+    if (onMount) {
+      setTimeout(onMount, 0);
+    }
+  },
 
-        if (closeBtn) closeBtn.onclick = () => close(false);
-        if (cancelBtn) cancelBtn.onclick = () => close(false);
-        if (confirmBtn) confirmBtn.onclick = () => close(true);
-        container.onclick = (e) => {
-            if (e.target === container) close(false);
-        };
-    });
-}
-
-function hideModal() {
+  hide() {
     document.getElementById('modal-container').classList.add('hidden');
-}
+  }
+};
