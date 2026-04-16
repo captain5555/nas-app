@@ -1,7 +1,7 @@
 # Flutter iOS App 开发进度
 
-**日期**: 2026-04-15  
-**状态**: 进行中，已完成基础架构
+**日期**: 2026-04-16
+**状态**: 已完成基础架构和核心功能
 
 ---
 
@@ -30,36 +30,32 @@
 - ✅ 更新 `lib/main.dart` 初始化 Hive
 - ✅ Git commit: `feat: add utility classes and Hive initialization`
 
----
-
-## 待执行的任务 ⏳
-
 ### Task 5: 创建 API 服务层
-- 创建 `lib/services/api_service.dart`
-- 创建 `lib/services/auth_service.dart`
-- 创建 `lib/services/material_service.dart`
-- 创建 `lib/services/user_service.dart`
-- 创建 `lib/services/ai_service.dart`
+- ✅ `lib/services/api_service.dart` - 基础 Dio 封装，Token 拦截器
+- ✅ `lib/services/auth_service.dart` - 登录/登出/获取用户
+- ✅ `lib/services/material_service.dart` - 素材 CRUD、批量操作
+- ✅ `lib/services/user_service.dart` - 用户管理
+- ✅ `lib/services/ai_service.dart` - AI 功能接口
 
 ### Task 6: 创建 Provider 状态管理
-- 创建 `lib/providers/auth_provider.dart`
-- 创建 `lib/providers/material_provider.dart`
-- 创建 `lib/providers/theme_provider.dart`
-- 创建 `lib/providers/settings_provider.dart`
+- ✅ `lib/providers/auth_provider.dart` - 认证状态
+- ✅ `lib/providers/material_provider.dart` - 素材列表状态
+- ✅ `lib/providers/theme_provider.dart` - 主题切换
+- ✅ `lib/providers/settings_provider.dart` - 设置管理
 
 ### Task 7: 创建登录页面
-- 创建 `lib/screens/login/login_screen.dart`
-- 创建 `lib/screens/home/home_screen.dart` (初始版本)
-- 更新 `lib/main.dart` 集成 Provider
+- ✅ `lib/screens/login/login_screen.dart` - 登录界面
+- ✅ `lib/screens/home/home_screen.dart` (初始版本) - 首页框架
+- ✅ 更新 `lib/main.dart` 集成 Provider - 完整应用初始化流程
 
 ### Task 8: 创建素材卡片和首页
-- 创建 `lib/widgets/material_card.dart`
-- 完善 `lib/screens/home/home_screen.dart`
-- 创建 `lib/screens/settings/settings_screen.dart` (初始版本)
+- ✅ `lib/widgets/material_card.dart` - 素材网格卡片组件
+- ✅ 完善 `lib/screens/home/home_screen.dart` - 网格视图、文件夹切换、多选删除
+- ✅ `lib/screens/settings/settings_screen.dart` (初始版本) - 设置页面框架
 
 ### Task 9: 创建设置页面和 iOS 配置
-- 完善 `lib/screens/settings/settings_screen.dart`
-- 配置 `ios/Runner/Info.plist`
+- ✅ 完善 `lib/screens/settings/settings_screen.dart` - API 地址编辑、主题切换
+- ✅ 配置 `ios/Runner/Info.plist` - 相册/相机权限、ATS 配置、应用名称
 
 ---
 
@@ -77,9 +73,32 @@ flutter_app/
 │   ├── models/
 │   │   ├── user.dart
 │   │   └── material.dart
-│   └── utils/
-│       ├── token_storage.dart
-│       └── file_helper.dart
+│   ├── providers/
+│   │   ├── auth_provider.dart
+│   │   ├── material_provider.dart
+│   │   ├── theme_provider.dart
+│   │   └── settings_provider.dart
+│   ├── screens/
+│   │   ├── login/
+│   │   │   └── login_screen.dart
+│   │   ├── home/
+│   │   │   └── home_screen.dart
+│   │   └── settings/
+│   │       └── settings_screen.dart
+│   ├── services/
+│   │   ├── api_service.dart
+│   │   ├── auth_service.dart
+│   │   ├── material_service.dart
+│   │   ├── user_service.dart
+│   │   └── ai_service.dart
+│   ├── utils/
+│   │   ├── token_storage.dart
+│   │   └── file_helper.dart
+│   └── widgets/
+│       └── material_card.dart
+├── ios/
+│   └── Runner/
+│       └── Info.plist (已配置权限)
 ├── pubspec.yaml
 └── PROGRESS.md (本文件)
 ```
@@ -88,15 +107,25 @@ flutter_app/
 
 ## 下一步
 
-从 **Task 5: 创建 API 服务层** 继续执行。
+### 可继续的功能
+- 素材详情页
+- 上传素材功能
+- AI 标题/描述生成
+- 回收站页面
+- 用户管理（管理员）
 
-详细计划请参考：
-`docs/superpowers/plans/2026-04-15-flutter-ios-app-plan.md`
+### 测试和运行
+```bash
+cd flutter_app
+flutter pub get
+flutter run
+```
 
 ---
 
 ## 备注
 
 - 后端服务运行在: http://localhost:3000
-- 默认账户: admin / user1 / user2 / user3
+- 默认账户: admin / user1 / user2 / user3 (密码: admin123)
+- iOS Info.plist 已配置相册/相机权限和 ATS
 - 后续改进建议: 考虑使用 flutter_secure_storage 替代 Hive 存储敏感信息
