@@ -1,0 +1,39 @@
+# iOS 打包工作流配置
+name: Build iOS IPA
+
+# 触发条件：推送到 main 分支时自动构建，也支持手动触发
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    # 使用 GitHub 提供的 macOS 云服务器
+    runs-on: macos-latest
+    steps:
+      # 1. 拉取仓库代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 安装 Flutter 环境（建议用你本地的版本）
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0' # 改成你本地的 Flutter 版本号
+          channel: 'stable'
+
+      # 3. 安装项目依赖
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 4. 构建 iOS 发布包（--no-codesign 跳过签名，用于测试）
+      - name: Build iOS IPA
+        run: flutter build ipa --release --no-codesign
+
+      # 5. 上传生成的 .ipa 文件（构建完成后可下载）
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-ios-ipa
+          path: build/ios/ipa/*.ipa
