@@ -134,6 +134,10 @@ class MaterialCard extends StatelessWidget {
                       CachedNetworkImage(
                         imageUrl: thumbnailUrl,
                         fit: BoxFit.cover,
+                        memCacheWidth: 400,
+                        memCacheHeight: 400,
+                        maxWidthDiskCache: 800,
+                        maxHeightDiskCache: 800,
                         placeholder: (context, url) => Container(
                           color: CupertinoColors.systemGrey5,
                           child: const Center(
