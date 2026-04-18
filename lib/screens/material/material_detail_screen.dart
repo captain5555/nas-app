@@ -9,6 +9,7 @@ import '../../providers/material_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/ai_service.dart';
 import '../../constants/theme_constants.dart';
+import 'dart:html' as html;
 
 class MaterialDetailScreen extends StatefulWidget {
   final Material material;
@@ -342,27 +343,31 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     }
   }
 
-  Future<void> _downloadVideo() async {
+  Future<void> _downloadMedia() async {
     setState(() => _isLoading = true);
     try {
-      // 在Web端，我们直接打开下载链接
       final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
       final mediaUrl = _getMediaUrl(settingsProvider.baseUrl);
 
-      if (mediaUrl != null && mounted) {
-        showCupertinoDialog(
-          context: context,
-          builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('下载视频'),
-            content: const Text('请在新标签页中下载'),
-            actions: [
-              CupertinoDialogAction(
-                child: const Text('确定'),
-                onPressed: () => Navigator.pop(ctx),
-              ),
-            ],
-          ),
-        );
+      if (mediaUrl != null) {
+        // 在Web端打开新标签页下载
+        html.window.open(mediaUrl, '_blank');
+
+        if (mounted) {
+          showCupertinoDialog(
+            context: context,
+            builder: (ctx) => CupertinoAlertDialog(
+              title: Text(widget.material.isVideo ? '下载视频' : '下载图片'),
+              content: const Text('请在新标签页中查看下载进度'),
+              actions: [
+                CupertinoDialogAction(
+                  child: const Text('确定'),
+                  onPressed: () => Navigator.pop(ctx),
+                ),
+              ],
+            ),
+          );
+        }
       }
     } catch (e) {
       if (mounted) {
@@ -658,20 +663,19 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                     _buildInfoRow('上传时间', _formatDate(widget.material.createdAt!)),
                   ],
                   const SizedBox(height: ThemeConstants.spacingMd),
-                  if (widget.material.isVideo)
-                    CupertinoButton.filled(
-                      onPressed: _isLoading ? null : _downloadVideo,
-                      child: _isLoading
-                          ? const CupertinoActivityIndicator()
-                          : const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(CupertinoIcons.arrow_down_doc, size: 18),
-                                SizedBox(width: 8),
-                                Text('下载视频'),
-                              ],
-                            ),
-                    ),
+                  CupertinoButton.filled(
+                    onPressed: _isLoading ? null : _downloadMedia,
+                    child: _isLoading
+                        ? const CupertinoActivityIndicator()
+                        : Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(CupertinoIcons.arrow_down_doc, size: 18),
+                              const SizedBox(width: 8),
+                              Text(widget.material.isVideo ? '下载视频' : '下载图片'),
+                            ],
+                          ),
+                  ),
                 ],
               ),
             ),
