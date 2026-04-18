@@ -362,15 +362,15 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       if (Platform.isAndroid) {
         final status = await Permission.storage.request();
         if (!status.isGranted) {
-          throw Exception('需要存储权限才能下载');
+          throw Exception('需要存储权限才能下载，请在设置中开启');
         }
       }
 
       if (Platform.isIOS) {
-        // iOS请求相册权限 - 使用标准photos权限
+        // iOS请求相册权限
         final photosStatus = await Permission.photos.request();
         if (!photosStatus.isGranted) {
-          throw Exception('需要相册权限才能保存文件，请在设置中开启');
+          throw Exception('需要相册权限才能保存文件\n\n如果设置中没有相册权限选项，请卸载APP后重新安装');
         }
       }
 
