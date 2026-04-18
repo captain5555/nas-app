@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:app_settings/app_settings.dart';
 import '../../models/material.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/material_provider.dart';
@@ -366,8 +367,8 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       }
 
       if (Platform.isIOS) {
-        // iOS请求相册权限
-        final photosStatus = await Permission.photosAddOnly.request();
+        // iOS请求相册权限 - 使用标准photos权限
+        final photosStatus = await Permission.photos.request();
         if (!photosStatus.isGranted) {
           throw Exception('需要相册权限才能保存文件，请在设置中开启');
         }
@@ -433,6 +434,14 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
             title: const Text('下载失败'),
             content: Text(e.toString()),
             actions: [
+              if (Platform.isIOS)
+                CupertinoDialogAction(
+                  child: const Text('去设置'),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    AppSettings.openAppSettings();
+                  },
+                ),
               CupertinoDialogAction(
                 child: const Text('确定'),
                 onPressed: () => Navigator.pop(ctx),
