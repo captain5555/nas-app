@@ -1,15 +1,19 @@
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:video_player/video_player.dart';
 import 'package:provider/provider.dart';
+import 'package:dio/dio.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import '../../models/material.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/material_provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../services/ai_service.dart';
 import '../../constants/theme_constants.dart';
-import 'dart:html' as html;
 
 class MaterialDetailScreen extends StatefulWidget {
   final Material material;
@@ -349,16 +353,56 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
       final mediaUrl = _getMediaUrl(settingsProvider.baseUrl);
 
-      if (mediaUrl != null) {
-        // 在Web端打开新标签页下载
-        html.window.open(mediaUrl, '_blank');
+      if (mediaUrl == null) {
+        throw Exception('无法获取媒体链接');
+      }
 
+      // 请求存储权限
+      if (Platform.isAndroid || Platform.isIOS) {
+        final status = await Permission.storage.request();
+        if (!status.isGranted) {
+          throw Exception('需要存储权限才能下载');
+        }
+
+        // iOS还需要相册权限
+        if (Platform.isIOS) {
+          final photosStatus = await Permission.photos.request();
+          if (!photosStatus.isGranted) {
+            throw Exception('需要相册权限才能保存');
+          }
+        }
+      }
+
+      // 下载文件
+      final dio = Dio();
+      final tempDir = await getTemporaryDirectory();
+      final savePath = '${tempDir.path}/${widget.material.fileName}';
+
+      await dio.download(
+        mediaUrl,
+        savePath,
+        options: Options(
+          responseType: ResponseType.bytes,
+          followRedirects: true,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+
+      // 保存到相册
+      final result = await ImageGallerySaver.saveFile(
+        savePath,
+        name: widget.material.fileName,
+      );
+
+      if (result['isSuccess'] == true) {
         if (mounted) {
           showCupertinoDialog(
             context: context,
             builder: (ctx) => CupertinoAlertDialog(
-              title: Text(widget.material.isVideo ? '下载视频' : '下载图片'),
-              content: const Text('请在新标签页中查看下载进度'),
+              title: Text(widget.material.isVideo ? '下载成功' : '保存成功'),
+              content: Text(widget.material.isVideo
+                  ? '视频已保存到相册'
+                  : '图片已保存到相册'),
               actions: [
                 CupertinoDialogAction(
                   child: const Text('确定'),
@@ -368,6 +412,18 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
             ),
           );
         }
+      } else {
+        throw Exception('保存到相册失败');
+      }
+
+      // 清理临时文件
+      try {
+        final tempFile = File(savePath);
+        if (await tempFile.exists()) {
+          await tempFile.delete();
+        }
+      } catch (_) {
+        // 忽略清理错误
       }
     } catch (e) {
       if (mounted) {
