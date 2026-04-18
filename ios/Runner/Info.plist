@@ -56,6 +56,10 @@
 	<key>NSCameraUsageDescription</key>
 	<string>需要访问相机以拍摄照片或视频</string>
 
+	<!-- 麦克风权限 -->
+	<key>NSMicrophoneUsageDescription</key>
+	<string>需要访问麦克风以录制视频</string>
+
 	<!-- 文件访问权限 -->
 	<key>UIFileSharingEnabled</key>
 	<true/>
