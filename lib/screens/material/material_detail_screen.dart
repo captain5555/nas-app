@@ -357,19 +357,19 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         throw Exception('无法获取媒体链接');
       }
 
-      // 请求存储权限
-      if (Platform.isAndroid || Platform.isIOS) {
+      // 请求权限
+      if (Platform.isAndroid) {
         final status = await Permission.storage.request();
         if (!status.isGranted) {
           throw Exception('需要存储权限才能下载');
         }
+      }
 
-        // iOS还需要相册权限
-        if (Platform.isIOS) {
-          final photosStatus = await Permission.photos.request();
-          if (!photosStatus.isGranted) {
-            throw Exception('需要相册权限才能保存');
-          }
+      if (Platform.isIOS) {
+        // iOS请求相册权限
+        final photosStatus = await Permission.photosAddOnly.request();
+        if (!photosStatus.isGranted) {
+          throw Exception('需要相册权限才能保存文件，请在设置中开启');
         }
       }
 
@@ -388,7 +388,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         ),
       );
 
-      // 保存到相册
+      // 保存到相册 - iOS权限由image_gallery_saver自动处理
       final result = await ImageGallerySaver.saveFile(
         savePath,
         name: widget.material.fileName,
@@ -413,7 +413,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           );
         }
       } else {
-        throw Exception('保存到相册失败');
+        throw Exception(result['errorMessage'] ?? '保存到相册失败');
       }
 
       // 清理临时文件

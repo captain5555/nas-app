@@ -46,11 +46,13 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 
-	<!-- 相册权限 -->
+	<!-- 相册权限 - 读取 -->
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>需要访问相册以选择素材文件</string>
+	<string>需要访问相册以下载和保存素材文件</string>
+
+	<!-- 相册权限 - 写入 -->
 	<key>NSPhotoLibraryAddUsageDescription</key>
-	<string>需要保存图片到相册</string>
+	<string>需要保存图片和视频到相册</string>
 
 	<!-- 相机权限 -->
 	<key>NSCameraUsageDescription</key>
