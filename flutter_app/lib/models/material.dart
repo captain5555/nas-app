@@ -62,11 +62,11 @@ class Material {
   String get usageTagLabel {
     switch (usageTag) {
       case 'unused':
-        return '未使用';
+        return 'Unused';
       case 'used':
-        return '已使用';
+        return 'Used';
       case 'viral_candidate':
-        return '爆款备选';
+        return 'Viral Candidate';
       default:
         return usageTag;
     }
@@ -75,11 +75,11 @@ class Material {
   String get viralTagLabel {
     switch (viralTag) {
       case 'not_viral':
-        return '非爆款';
+        return 'Not Viral';
       case 'monitoring':
-        return '待观察';
+        return 'Monitoring';
       case 'viral':
-        return '爆款';
+        return 'Viral';
       default:
         return viralTag;
     }

@@ -6,6 +6,10 @@ import '../../providers/auth_provider.dart';
 import '../../constants/theme_constants.dart';
 import '../login/login_screen.dart';
 import '../admin/user_management_screen.dart';
+import '../admin/ai_settings_screen.dart';
+import '../admin/stats_screen.dart';
+import '../admin/logs_screen.dart';
+import '../admin/backup_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -43,7 +47,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showCupertinoDialog(
       context: context,
       builder: (context) => CupertinoAlertDialog(
-        title: const Text('API 地址'),
+        title: const Text('API URL'),
         content: Padding(
           padding: const EdgeInsets.only(top: ThemeConstants.spacingMd),
           child: CupertinoTextField(
@@ -55,11 +59,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.of(context).pop(),
           ),
           CupertinoDialogAction(
-            child: const Text('保存'),
+            child: const Text('Save'),
             onPressed: () async {
               final url = controller.text.trim();
               if (url.isNotEmpty) {
@@ -79,16 +83,16 @@ class _SettingsScreenState extends State<SettingsScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('清除缓存'),
-        content: const Text('确定要清除所有缓存吗？'),
+        title: const Text('Clear Cache'),
+        content: const Text('Are you sure you want to clear all cache?'),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            child: const Text('清除'),
+            child: const Text('Clear'),
             onPressed: () async {
               Navigator.pop(ctx);
               await _clearCache();
@@ -108,11 +112,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('清除成功'),
-            content: const Text('缓存已清除'),
+            title: const Text('Cleared Successfully'),
+            content: const Text('Cache has been cleared'),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -124,11 +128,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('清除失败'),
+            title: const Text('Clear Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -142,7 +146,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
-        middle: Text('设置'),
+        middle: Text('Settings'),
       ),
       child: SafeArea(
         child: ListView(
@@ -152,10 +156,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Consumer<ThemeProvider>(
               builder: (context, themeProvider, child) {
                 return CupertinoListSection.insetGrouped(
-                  header: const Text('外观'),
+                  header: const Text('Appearance'),
                   children: [
                     CupertinoListTile(
-                      title: const Text('深色模式'),
+                      title: const Text('Dark Mode'),
                       trailing: CupertinoSwitch(
                         value: themeProvider.isDarkMode,
                         onChanged: (value) {
@@ -172,10 +176,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             Consumer<SettingsProvider>(
               builder: (context, settingsProvider, child) {
                 return CupertinoListSection.insetGrouped(
-                  header: const Text('服务器'),
+                  header: const Text('Server'),
                   children: [
                     CupertinoListTile(
-                      title: const Text('API 地址'),
+                      title: const Text('API URL'),
                       subtitle: Text(settingsProvider.baseUrl),
                       trailing: const CupertinoListTileChevron(),
                       onTap: _showApiUrlDialog,
@@ -187,10 +191,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Cache Section
             CupertinoListSection.insetGrouped(
-              header: const Text('缓存'),
+              header: const Text('Cache'),
               children: [
                 CupertinoListTile(
-                  title: const Text('清除缓存'),
+                  title: const Text('Clear Cache'),
                   trailing: const CupertinoListTileChevron(),
                   onTap: _showClearCacheDialog,
                 ),
@@ -204,15 +208,59 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   return const SizedBox.shrink();
                 }
                 return CupertinoListSection.insetGrouped(
-                  header: const Text('管理'),
+                  header: const Text('Admin'),
                   children: [
                     CupertinoListTile(
-                      title: const Text('用户管理'),
+                      title: const Text('User Management'),
                       trailing: const CupertinoListTileChevron(),
                       onTap: () {
                         Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (_) => const UserManagementScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    CupertinoListTile(
+                      title: const Text('System Stats'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const StatsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    CupertinoListTile(
+                      title: const Text('Activity Logs'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const LogsScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    CupertinoListTile(
+                      title: const Text('Backup Management'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const BackupScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                    CupertinoListTile(
+                      title: const Text('AI Settings'),
+                      trailing: const CupertinoListTileChevron(),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const AiSettingsScreen(),
                           ),
                         );
                       },
@@ -224,11 +272,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Account Section
             CupertinoListSection.insetGrouped(
-              header: const Text('账户'),
+              header: const Text('Account'),
               children: [
                 CupertinoListTile(
                   title: const Text(
-                    '退出登录',
+                    'Logout',
                     style: TextStyle(color: CupertinoColors.systemRed),
                   ),
                   onTap: _logout,
@@ -238,10 +286,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
             // Info Section
             CupertinoListSection.insetGrouped(
-              header: const Text('关于'),
+              header: const Text('About'),
               children: const [
                 CupertinoListTile(
-                  title: Text('版本'),
+                  title: Text('Version'),
                   subtitle: Text('1.0.0'),
                 ),
               ],

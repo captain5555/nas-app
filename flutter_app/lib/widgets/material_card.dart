@@ -134,6 +134,10 @@ class MaterialCard extends StatelessWidget {
                       CachedNetworkImage(
                         imageUrl: thumbnailUrl,
                         fit: BoxFit.cover,
+                        memCacheWidth: 400,
+                        memCacheHeight: 400,
+                        maxWidthDiskCache: 800,
+                        maxHeightDiskCache: 800,
                         placeholder: (context, url) => Container(
                           color: CupertinoColors.systemGrey5,
                           child: const Center(
@@ -170,7 +174,7 @@ class MaterialCard extends StatelessWidget {
                               ),
                               SizedBox(width: 3),
                               Text(
-                                '视频',
+                                'Video',
                                 style: TextStyle(
                                   fontSize: 10,
                                   color: CupertinoColors.white,
@@ -306,7 +310,7 @@ class _PlaceholderIcon extends StatelessWidget {
             if (isVideo) ...[
               const SizedBox(height: 8),
               Text(
-                '视频素材',
+                'Video',
                 style: TextStyle(
                   fontSize: 12,
                   color: CupertinoColors.systemGrey,

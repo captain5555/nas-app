@@ -4,6 +4,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../models/user.dart';
 import '../../services/user_service.dart';
+import '../../utils/user_storage.dart';
 import '../../constants/theme_constants.dart';
 
 class UserManagementScreen extends StatefulWidget {
@@ -33,6 +34,10 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     try {
       _users = await _userService.getUsers();
+      // 自动保存所有用户到登录列表
+      for (final user in _users) {
+        await UserStorage.saveUser(user.username);
+      }
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -48,18 +53,18 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('创建用户'),
+        title: const Text('Create User'),
         content: Padding(
           padding: const EdgeInsets.only(top: 16),
           child: CupertinoTextField(
             controller: nameController,
-            placeholder: '用户名',
+            placeholder: 'Username',
             autofocus: true,
           ),
         ),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx),
           ),
           CupertinoDialogAction(
@@ -70,7 +75,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 await _createUser(name);
               }
             },
-            child: const Text('创建'),
+            child: const Text('Create'),
           ),
         ],
       ),
@@ -80,17 +85,19 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   Future<void> _createUser(String username) async {
     try {
       await _userService.createUser(username);
+      // 保存新用户到登录列表
+      await UserStorage.saveUser(username);
       await _loadUsers();
     } catch (e) {
       if (mounted) {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('创建失败'),
+            title: const Text('Creation Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -104,11 +111,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: Text('删除用户 "${user.username}"？'),
-        content: const Text('该用户的素材将转移给admin'),
+        title: Text('Delete user "${user.username}"?'),
+        content: const Text('This user\'s media will be transferred to admin'),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx),
           ),
           CupertinoDialogAction(
@@ -117,7 +124,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
               Navigator.pop(ctx);
               await _deleteUser(user);
             },
-            child: const Text('删除'),
+            child: const Text('Delete'),
           ),
         ],
       ),
@@ -133,11 +140,11 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('删除失败'),
+            title: const Text('Delete Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -154,7 +161,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('用户管理'),
+        middle: const Text('User Management'),
         trailing: isAdmin
             ? CupertinoButton(
                 padding: EdgeInsets.zero,
@@ -172,7 +179,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '加载失败',
+                          'Failed to load',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -182,7 +189,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                         const SizedBox(height: 16),
                         CupertinoButton.filled(
                           onPressed: _loadUsers,
-                          child: const Text('重试'),
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -274,7 +281,7 @@ class _UserCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: const Text(
-                          '当前',
+                          'Current',
                           style: TextStyle(
                             fontSize: 10,
                             color: CupertinoColors.systemGreen,
@@ -287,7 +294,7 @@ class _UserCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  user.role == 'admin' ? '管理员' : '普通用户',
+                  user.role == 'admin' ? 'Admin' : 'User',
                   style: const TextStyle(
                     fontSize: 13,
                     color: CupertinoColors.secondaryLabel,

@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return CupertinoApp(
-            title: 'NAS 素材管理',
+            title: 'NAS Media Manager',
             theme: CupertinoThemeData(
               brightness: themeProvider.brightness,
               primaryColor: CupertinoColors.systemBlue,

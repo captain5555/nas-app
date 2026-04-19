@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../constants/theme_constants.dart';
+import '../../utils/user_storage.dart';
 import '../home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,12 +16,100 @@ class _LoginScreenState extends State<LoginScreen> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  List<String> _savedUsers = [];
+  bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _usernameController.text = 'admin';
     _passwordController.text = 'admin123';
+    _loadSavedUsers();
+  }
+
+  Future<void> _loadSavedUsers() async {
+    final users = await UserStorage.getSavedUsers();
+    setState(() {
+      _savedUsers = users;
+    });
+  }
+
+  void _showUserPicker() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (ctx) => CupertinoActionSheet(
+        title: const Text('Select User'),
+        message: _savedUsers.isEmpty ? const Text('No saved users') : null,
+        actions: _savedUsers.isEmpty
+            ? []
+            : _savedUsers.map((username) => CupertinoActionSheetAction(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    setState(() {
+                      _usernameController.text = username;
+                      _passwordController.text = '123';
+                    });
+                  },
+                  child: Text(username),
+                )).toList(),
+        cancelButton: CupertinoActionSheetAction(
+          isDefaultAction: true,
+          onPressed: () => Navigator.pop(ctx),
+          child: const Text('Cancel'),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submit() async {
+    final username = _usernameController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (username.isEmpty) {
+      _showError('Please enter username');
+      return;
+    }
+    if (password.isEmpty) {
+      _showError('Please enter password');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final success = await authProvider.login(username, password);
+
+    if (success) {
+      // Save username locally
+      await UserStorage.saveUser(username);
+      await _loadSavedUsers();
+
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          CupertinoPageRoute(builder: (_) => const HomeScreen()),
+        );
+      }
+    } else if (mounted) {
+      setState(() => _isLoading = false);
+      _showError(authProvider.error ?? 'Login failed');
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text('Notice'),
+        content: Text(message),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text('OK'),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -30,58 +119,16 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  Future<void> _submit() async {
-    final username = _usernameController.text.trim();
-    final password = _passwordController.text.trim();
-
-    if (username.isEmpty) {
-      _showError('请输入用户名');
-      return;
-    }
-    if (password.isEmpty) {
-      _showError('请输入密码');
-      return;
-    }
-
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.login(username, password);
-
-    if (success && mounted) {
-      Navigator.of(context).pushReplacement(
-        CupertinoPageRoute(builder: (_) => const HomeScreen()),
-      );
-    } else if (mounted) {
-      _showError(authProvider.error ?? '登录失败');
-    }
-  }
-
-  void _showError(String message) {
-    if (!mounted) return;
-    showCupertinoDialog(
-      context: context,
-      builder: (context) => CupertinoAlertDialog(
-        title: const Text('提示'),
-        content: Text(message),
-        actions: [
-          CupertinoDialogAction(
-            child: const Text('确定'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
-        middle: Text('登录'),
+        middle: Text('Login'),
       ),
       child: SafeArea(
         child: Consumer<AuthProvider>(
           builder: (context, authProvider, child) {
-            if (authProvider.isLoading) {
+            if (authProvider.isLoading || _isLoading) {
               return const Center(child: CupertinoActivityIndicator());
             }
 
@@ -98,32 +145,50 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: ThemeConstants.spacingMd),
                   const Text(
-                    'NAS 素材管理',
+                    'NAS Media Manager',
                     style: ThemeConstants.titleStyle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: ThemeConstants.spacingXl * 2),
 
-                  // 用户名
+                  // Username
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.spacingSm),
-                    child: CupertinoTextField(
-                      controller: _usernameController,
-                      placeholder: '用户名',
-                      prefix: const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Icon(CupertinoIcons.person, size: 20),
-                      ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: CupertinoTextField(
+                            controller: _usernameController,
+                            placeholder: 'Username',
+                            prefix: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Icon(CupertinoIcons.person, size: 20),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        CupertinoButton(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          color: CupertinoColors.systemGrey6,
+                          onPressed: _savedUsers.isEmpty ? null : _showUserPicker,
+                          child: Icon(
+                            _savedUsers.isEmpty
+                                ? CupertinoIcons.person_badge_plus
+                                : CupertinoIcons.person_3,
+                            size: 20,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: ThemeConstants.spacingMd),
 
-                  // 密码
+                  // Password
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.spacingSm),
                     child: CupertinoTextField(
                       controller: _passwordController,
-                      placeholder: '密码',
+                      placeholder: 'Password',
                       obscureText: _obscurePassword,
                       prefix: const Padding(
                         padding: EdgeInsets.all(8.0),
@@ -147,15 +212,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: ThemeConstants.spacingXl),
 
-                  // 登录按钮
+                  // Login button
                   CupertinoButton.filled(
                     onPressed: _submit,
-                    child: const Text('登录'),
+                    child: const Text('Login'),
                   ),
 
                   const SizedBox(height: ThemeConstants.spacingMd),
                   const Text(
-                    '测试账户: admin / admin123',
+                    'Admin: admin / admin123\nOther users: username / 123',
                     style: ThemeConstants.captionStyle,
                     textAlign: TextAlign.center,
                   ),
