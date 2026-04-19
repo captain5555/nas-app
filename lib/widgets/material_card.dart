@@ -20,7 +20,7 @@ class MaterialCard extends StatelessWidget {
   });
 
   String? _getThumbnailUrl(String baseUrl) {
-    // 1. Prefer using complete thumbnail_url from backend
+    // 1. Prefer using complete thumbnail_url from backend (for both images and videos)
     if (material.thumbnailUrl != null && material.thumbnailUrl!.isNotEmpty) {
       return _buildFullUrl(baseUrl, material.thumbnailUrl!);
     }
@@ -28,7 +28,7 @@ class MaterialCard extends StatelessWidget {
     if (material.thumbnailPath != null && material.thumbnailPath!.isNotEmpty) {
       return _buildFullUrl(baseUrl, material.thumbnailPath!);
     }
-    // 3. Only images use file_url or filePath as preview
+    // 3. Only images use file_url or filePath as preview (videos don't use the video itself as thumbnail)
     if (material.isImage) {
       if (material.fileUrl != null && material.fileUrl!.isNotEmpty) {
         return _buildFullUrl(baseUrl, material.fileUrl!);
@@ -37,7 +37,7 @@ class MaterialCard extends StatelessWidget {
         return _buildFullUrl(baseUrl, material.filePath);
       }
     }
-    // Video has no thumbnail, return null to show placeholder icon
+    // For videos without thumbnail, return null to show placeholder icon
     return null;
   }
 
