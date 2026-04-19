@@ -57,15 +57,15 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.photo),
-            label: '素材',
+            label: 'Materials',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.trash),
-            label: '垃圾箱',
+            label: 'Trash',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.settings),
-            label: '设置',
+            label: 'Settings',
           ),
         ],
         currentIndex: _selectedIndex,
@@ -146,7 +146,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     setState(() => _isLoadingUsers = true);
     try {
       final users = await _userService.getUsers();
-      // 过滤掉管理员自己
+      // Filter out admin himself
       setState(() {
         _users = users.where((u) => u.id != authProvider.user?.id).toList();
       });
@@ -180,14 +180,14 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoActionSheet(
-        title: const Text('选择查看用户'),
+        title: const Text('Select User to View'),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _switchViewingUser(null);
             },
-            child: Text('${authProvider.user?.username} (我)'),
+            child: Text('${authProvider.user?.username} (Me)'),
           ),
           ..._users.where((u) => u.id != authProvider.user?.id).map((user) => CupertinoActionSheetAction(
                 onPressed: () {
@@ -200,7 +200,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         cancelButton: CupertinoActionSheetAction(
           isDefaultAction: true,
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('取消'),
+          child: const Text('Cancel'),
         ),
       ),
     );
@@ -228,16 +228,16 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: Text('确认删除 ${_selectedIds.length} 项？'),
-        content: const Text('删除的素材将移到垃圾箱'),
+        title: Text('Delete ${_selectedIds.length} items?'),
+        content: const Text('Deleted materials will be moved to trash'),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx, false),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            child: const Text('删除'),
+            child: const Text('Delete'),
             onPressed: () => Navigator.pop(ctx, true),
           ),
         ],
@@ -258,14 +258,14 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: Text('复制 ${_selectedIds.length} 项到'),
+        title: Text('Copy ${_selectedIds.length} items to'),
         content: _isLoadingUsers
             ? const Padding(
                 padding: EdgeInsets.only(top: 16),
                 child: CupertinoActivityIndicator(),
               )
             : _users.isEmpty
-                ? const Text('暂无其他用户')
+                ? const Text('No other users')
                 : null,
         actions: [
           if (!_isLoadingUsers)
@@ -278,7 +278,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
                 )),
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx),
           ),
         ],
@@ -294,14 +294,14 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: Text('移动 ${_selectedIds.length} 项到'),
+        title: Text('Move ${_selectedIds.length} items to'),
         content: _isLoadingUsers
             ? const Padding(
                 padding: EdgeInsets.only(top: 16),
                 child: CupertinoActivityIndicator(),
               )
             : _users.isEmpty
-                ? const Text('暂无其他用户')
+                ? const Text('No other users')
                 : null,
         actions: [
           if (!_isLoadingUsers)
@@ -314,7 +314,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
                 )),
           CupertinoDialogAction(
             isDefaultAction: true,
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx),
           ),
         ],
@@ -326,27 +326,27 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoActionSheet(
-        title: Text('选择目标文件夹（${targetUser.username}）'),
+        title: Text('Select target folder (${targetUser.username})'),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _handleMove(targetUser, 'images');
             },
-            child: const Text('图片'),
+            child: const Text('Images'),
           ),
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _handleMove(targetUser, 'videos');
             },
-            child: const Text('视频'),
+            child: const Text('Videos'),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
           isDefaultAction: true,
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('取消'),
+          child: const Text('Cancel'),
         ),
       ),
     );
@@ -362,7 +362,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => CupertinoAlertDialog(
-          title: Text('复制到 ${targetUser.username}...'),
+          title: Text('Copying to ${targetUser.username}...'),
           content: const Center(
             child: Padding(
               padding: EdgeInsets.only(top: 16),
@@ -388,11 +388,11 @@ class _MaterialsTabState extends State<_MaterialsTab> {
           showCupertinoDialog(
             context: context,
             builder: (ctx) => CupertinoAlertDialog(
-              title: const Text('复制成功'),
-              content: Text('已复制到 ${targetUser.username}'),
+              title: const Text('Copy Successful'),
+              content: Text('Copied to ${targetUser.username}'),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('确定'),
+                  child: const Text('OK'),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
@@ -406,11 +406,11 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('复制失败'),
+            title: const Text('Copy Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -430,7 +430,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => CupertinoAlertDialog(
-          title: Text('移动到 ${targetUser.username}...'),
+          title: Text('Moving to ${targetUser.username}...'),
           content: const Center(
             child: Padding(
               padding: EdgeInsets.only(top: 16),
@@ -457,11 +457,11 @@ class _MaterialsTabState extends State<_MaterialsTab> {
           showCupertinoDialog(
             context: context,
             builder: (ctx) => CupertinoAlertDialog(
-              title: const Text('移动成功'),
-              content: Text('已移动到 ${targetUser.username}'),
+              title: const Text('Move Successful'),
+              content: Text('Moved to ${targetUser.username}'),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('确定'),
+                  child: const Text('OK'),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
@@ -475,11 +475,11 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('移动失败'),
+            title: const Text('Move Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -493,34 +493,34 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoActionSheet(
-        title: const Text('选择上传方式'),
+        title: const Text('Select Upload Method'),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _pickFromGallery();
             },
-            child: const Text('相册选择'),
+            child: const Text('Gallery'),
           ),
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _takePhoto();
             },
-            child: const Text('拍照'),
+            child: const Text('Take Photo'),
           ),
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _pickFile();
             },
-            child: const Text('文件选择'),
+            child: const Text('File Select'),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
           isDefaultAction: true,
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('取消'),
+          child: const Text('Cancel'),
         ),
       ),
     );
@@ -582,7 +582,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         context: context,
         barrierDismissible: false,
         builder: (ctx) => const CupertinoAlertDialog(
-          title: Text('上传中...'),
+          title: Text('Uploading...'),
           content: Center(
             child: Padding(
               padding: EdgeInsets.only(top: 16),
@@ -607,10 +607,10 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('上传成功'),
+            title: const Text('Upload Successful'),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -623,11 +623,11 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('上传失败'),
+            title: const Text('Upload Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -651,13 +651,13 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: _isSelectionMode
-            ? Text('已选择 ${_selectedIds.length} 项')
+            ? Text('${_selectedIds.length} selected')
             : GestureDetector(
                 onTap: isAdmin ? _showUserSwitcher : null,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(viewingUser?.username ?? '素材'),
+                    Text(viewingUser?.username ?? 'Materials'),
                     if (isAdmin) ...[
                       const SizedBox(width: 4),
                       Icon(
@@ -671,7 +671,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         leading: _isSelectionMode
             ? CupertinoButton(
                 padding: EdgeInsets.zero,
-                child: const Text('取消'),
+                child: const Text('Cancel'),
                 onPressed: _exitSelectionMode,
               )
             : null,
@@ -737,7 +737,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
                 ),
               ),
               child: Text(
-                folder == 'images' ? '图片' : '视频',
+                folder == 'images' ? 'Images' : 'Videos',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -765,7 +765,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  '加载失败',
+                  'Load Failed',
                   style: TextStyle(
                     color: CupertinoColors.systemRed,
                     fontSize: 18,
@@ -775,7 +775,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
                 const SizedBox(height: 16),
                 CupertinoButton.filled(
                   onPressed: widget.onRefresh,
-                  child: const Text('重试'),
+                  child: const Text('Retry'),
                 ),
               ],
             ),
@@ -796,7 +796,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
                 ),
                 const SizedBox(height: ThemeConstants.spacingMd),
                 const Text(
-                  '暂无素材',
+                  'No materials',
                   style: TextStyle(
                     color: CupertinoColors.secondaryLabel,
                   ),
@@ -864,20 +864,20 @@ class _MaterialsTabState extends State<_MaterialsTab> {
         children: [
           _buildActionButton(
             icon: CupertinoIcons.trash,
-            label: '删除',
+            label: 'Delete',
             isDestructive: true,
             onPressed: _handleBatchTrash,
           ),
           const SizedBox(width: ThemeConstants.spacingSm),
           _buildActionButton(
             icon: CupertinoIcons.doc_on_doc,
-            label: '复制',
+            label: 'Copy',
             onPressed: _showCopyDialog,
           ),
           const SizedBox(width: ThemeConstants.spacingSm),
           _buildActionButton(
             icon: CupertinoIcons.arrow_right,
-            label: '移动',
+            label: 'Move',
             onPressed: _showMoveDialog,
           ),
         ],
