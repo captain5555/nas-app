@@ -47,11 +47,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
   String _getUsageTagLabel(String tag) {
     switch (tag) {
       case 'unused':
-        return '未使用';
+        return 'Unused';
       case 'used':
-        return '已使用';
+        return 'Used';
       case 'viral_candidate':
-        return '爆款备选';
+        return 'Viral Candidate';
       default:
         return tag;
     }
@@ -60,11 +60,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
   String _getViralTagLabel(String tag) {
     switch (tag) {
       case 'not_viral':
-        return '非爆款';
+        return 'Not Viral';
       case 'monitoring':
-        return '待观察';
+        return 'Monitoring';
       case 'viral':
-        return '爆款';
+        return 'Viral';
       default:
         return tag;
     }
@@ -81,7 +81,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     _titleController.addListener(_onChanged);
     _descriptionController.addListener(_onChanged);
 
-    // 初始化视频播放器
+    // Initialize video player
     if (widget.material.isVideo) {
       final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
       final mediaUrl = _getMediaUrl(settingsProvider.baseUrl);
@@ -145,11 +145,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('保存失败'),
+            title: const Text('Save Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -164,17 +164,17 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
   }
 
   Future<void> _takeScreenshot() async {
-    // 在Web端，video_player插件不支持直接截图
-    // 这里我们显示一个提示，告诉用户这个功能在Web端暂不可用
+    // On Web, video_player plugin doesn't support direct screenshot
+    // Show a message telling users this feature isn't available on Web
     if (mounted) {
       showCupertinoDialog(
         context: context,
         builder: (ctx) => CupertinoAlertDialog(
-          title: const Text('提示'),
-          content: const Text('视频截图功能在Web版本中暂不可用，请使用原生App版本'),
+          title: const Text('Notice'),
+          content: const Text('Video screenshot feature is not available in Web version, please use the native App version'),
           actions: [
             CupertinoDialogAction(
-              child: const Text('确定'),
+              child: const Text('OK'),
               onPressed: () => Navigator.pop(ctx),
             ),
           ],
@@ -200,11 +200,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('生成失败'),
+            title: const Text('Generation Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -235,11 +235,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('生成失败'),
+            title: const Text('Generation Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -259,11 +259,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       showCupertinoDialog(
         context: context,
         builder: (ctx) => CupertinoAlertDialog(
-          title: const Text('提示'),
-          content: const Text('请先输入内容'),
+          title: const Text('Notice'),
+          content: const Text('Please enter content first'),
           actions: [
             CupertinoDialogAction(
-              child: const Text('确定'),
+              child: const Text('OK'),
               onPressed: () => Navigator.pop(ctx),
             ),
           ],
@@ -275,27 +275,27 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoActionSheet(
-        title: const Text('选择翻译方向'),
+        title: const Text('Select Translation Direction'),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _translate(isTitle: isTitle, toEnglish: true);
             },
-            child: const Text('中文 → 英文'),
+            child: const Text('Chinese → English'),
           ),
           CupertinoActionSheetAction(
             onPressed: () {
               Navigator.pop(ctx);
               _translate(isTitle: isTitle, toEnglish: false);
             },
-            child: const Text('英文 → 中文'),
+            child: const Text('English → Chinese'),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
           isDefaultAction: true,
           onPressed: () => Navigator.pop(ctx),
-          child: const Text('取消'),
+          child: const Text('Cancel'),
         ),
       ),
     );
@@ -311,7 +311,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       if (toEnglish) {
         translated = await _aiService.translateToEnglish(text);
       } else {
-        // 英译汉需要后端支持，目前先用中译英模拟
+        // English to Chinese requires backend support, currently using Chinese to English as mock
         translated = await _aiService.translateToChinese(text);
       }
 
@@ -326,15 +326,15 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
     } catch (e) {
       if (mounted) {
         String errorMsg = e.toString();
-        // 移除本地的错误掩盖，显示真实的错误信息
+        // Remove local error masking, show real error message
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('翻译失败'),
+            title: const Text('Translation Failed'),
             content: Text(errorMsg),
             actions: [
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -355,20 +355,20 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       final mediaUrl = _getMediaUrl(settingsProvider.baseUrl);
 
       if (mediaUrl == null) {
-        throw Exception('无法获取媒体链接');
+        throw Exception('Unable to get media link');
       }
 
-      // Android需要存储权限
+      // Android requires storage permission
       if (Platform.isAndroid) {
         final status = await Permission.storage.request();
         if (!status.isGranted) {
-          throw Exception('需要存储权限才能下载，请在设置中开启');
+          throw Exception('Storage permission is required for download, please enable in settings');
         }
       }
 
-      // iOS权限由image_gallery_saver自动处理
+      // iOS permissions handled automatically by image_gallery_saver
 
-      // 下载文件
+      // Download file
       final dio = Dio();
       final tempDir = await getTemporaryDirectory();
       final savePath = '${tempDir.path}/${widget.material.fileName}';
@@ -383,7 +383,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
         ),
       );
 
-      // 保存到相册 - iOS权限由image_gallery_saver自动处理
+      // Save to gallery - iOS permissions handled automatically by image_gallery_saver
       final result = await ImageGallerySaver.saveFile(
         savePath,
         name: widget.material.fileName,
@@ -394,13 +394,13 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           showCupertinoDialog(
             context: context,
             builder: (ctx) => CupertinoAlertDialog(
-              title: Text(widget.material.isVideo ? '下载成功' : '保存成功'),
+              title: Text(widget.material.isVideo ? 'Download Successful' : 'Save Successful'),
               content: Text(widget.material.isVideo
-                  ? '视频已保存到相册'
-                  : '图片已保存到相册'),
+                  ? 'Video saved to gallery'
+                  : 'Image saved to gallery'),
               actions: [
                 CupertinoDialogAction(
-                  child: const Text('确定'),
+                  child: const Text('OK'),
                   onPressed: () => Navigator.pop(ctx),
                 ),
               ],
@@ -408,36 +408,36 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
           );
         }
       } else {
-        throw Exception(result['errorMessage'] ?? '保存到相册失败');
+        throw Exception(result['errorMessage'] ?? 'Failed to save to gallery');
       }
 
-      // 清理临时文件
+      // Clean up temp file
       try {
         final tempFile = File(savePath);
         if (await tempFile.exists()) {
           await tempFile.delete();
         }
       } catch (_) {
-        // 忽略清理错误
+        // Ignore clean up error
       }
     } catch (e) {
       if (mounted) {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('下载失败'),
+            title: const Text('Download Failed'),
             content: Text(e.toString()),
             actions: [
               if (Platform.isIOS)
                 CupertinoDialogAction(
-                  child: const Text('去设置'),
+                  child: const Text('Go to Settings'),
                   onPressed: () {
                     Navigator.pop(ctx);
                     AppSettings.openAppSettings();
                   },
                 ),
               CupertinoDialogAction(
-                child: const Text('确定'),
+                child: const Text('OK'),
                 onPressed: () => Navigator.pop(ctx),
               ),
             ],
@@ -458,11 +458,11 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
       showCupertinoDialog(
         context: context,
         builder: (ctx) => CupertinoAlertDialog(
-          title: const Text('已复制'),
-          content: const Text('内容已复制到剪贴板'),
+          title: const Text('Copied'),
+          content: const Text('Content copied to clipboard'),
           actions: [
             CupertinoDialogAction(
-              child: const Text('确定'),
+              child: const Text('OK'),
               onPressed: () => Navigator.pop(ctx),
             ),
           ],
@@ -472,7 +472,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
   }
 
   String? _getMediaUrl(String baseUrl) {
-    // 优先使用后端提供的完整 file_url
+    // Prefer using the complete file_url provided by backend
     if (widget.material.fileUrl != null && widget.material.fileUrl!.isNotEmpty) {
       return _buildFullUrl(baseUrl, widget.material.fileUrl!);
     }
@@ -481,15 +481,15 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
   }
 
   String _buildFullUrl(String baseUrl, String path) {
-    // 如果已经是完整URL，直接返回
+    // If already a complete URL, return directly
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
-    // 如果是以 / 开头，拼接到 baseUrl
+    // If starts with /, append to baseUrl
     if (path.startsWith('/')) {
       return '$baseUrl$path';
     }
-    // 其他情况，加上 /uploads/
+    // Otherwise, add /uploads/
     return '$baseUrl/uploads/$path';
   }
 
@@ -512,7 +512,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                 padding: EdgeInsets.zero,
                 onPressed: _isEdited ? _save : null,
                 child: Text(
-                  '保存',
+                  'Save',
                   style: TextStyle(
                     color: _isEdited ? CupertinoTheme.of(context).primaryColor : CupertinoColors.inactiveGray,
                   ),
@@ -610,7 +610,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                     children: [
                       Icon(CupertinoIcons.camera, size: 18),
                       SizedBox(width: 8),
-                      Text('截图'),
+                      Text('Screenshot'),
                     ],
                   ),
                 ),
@@ -623,7 +623,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '已选择截图：',
+                      'Selected Screenshot:',
                       style: TextStyle(
                         fontSize: 13,
                         color: CupertinoColors.secondaryLabel,
@@ -646,13 +646,13 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
             // Title
             _buildSection(
-              title: '基本信息',
+              title: 'Basic Info',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   _buildTextFieldWithActions(
                     controller: _titleController,
-                    placeholder: '标题',
+                    placeholder: 'Title',
                     minLines: 1,
                     maxLines: 3,
                     onGenerate: _generateTitle,
@@ -661,7 +661,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   const SizedBox(height: ThemeConstants.spacingMd),
                   _buildTextFieldWithActions(
                     controller: _descriptionController,
-                    placeholder: '描述',
+                    placeholder: 'Description',
                     minLines: 3,
                     maxLines: 10,
                     onGenerate: _generateDescription,
@@ -674,7 +674,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
             // Usage Tag
             _buildSection(
-              title: '使用状态',
+              title: 'Usage Status',
               child: _buildSegmentedControl(
                 value: _usageTag,
                 options: _usageTags,
@@ -691,7 +691,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
             // Viral Tag
             _buildSection(
-              title: '爆款状态',
+              title: 'Viral Status',
               child: _buildSegmentedControl(
                 value: _viralTag,
                 options: _viralTags,
@@ -708,18 +708,18 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
 
             // File Info
             _buildSection(
-              title: '文件信息',
+              title: 'File Info',
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildInfoRow('文件名', widget.material.fileName),
+                  _buildInfoRow('Filename', widget.material.fileName),
                   const SizedBox(height: ThemeConstants.spacingSm),
-                  _buildInfoRow('大小', widget.material.fileSizeFormatted),
+                  _buildInfoRow('Size', widget.material.fileSizeFormatted),
                   const SizedBox(height: ThemeConstants.spacingSm),
-                  _buildInfoRow('类型', widget.material.folderType),
+                  _buildInfoRow('Type', widget.material.folderType),
                   if (widget.material.createdAt != null) ...[
                     const SizedBox(height: ThemeConstants.spacingSm),
-                    _buildInfoRow('上传时间', _formatDate(widget.material.createdAt!)),
+                    _buildInfoRow('Upload Time', _formatDate(widget.material.createdAt!)),
                   ],
                   const SizedBox(height: ThemeConstants.spacingMd),
                   CupertinoButton.filled(
@@ -731,7 +731,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                             children: [
                               const Icon(CupertinoIcons.arrow_down_doc, size: 18),
                               const SizedBox(width: 8),
-                              Text(widget.material.isVideo ? '下载视频' : '下载图片'),
+                              Text(widget.material.isVideo ? 'Download Video' : 'Download Image'),
                             ],
                           ),
                   ),
@@ -807,7 +807,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                         children: [
                           Icon(CupertinoIcons.sparkles, size: 16),
                           SizedBox(width: 4),
-                          Text('AI生成', style: TextStyle(fontSize: 14)),
+                          Text('AI Generate', style: TextStyle(fontSize: 14)),
                         ],
                       ),
               ),
@@ -824,7 +824,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   children: [
                     Icon(CupertinoIcons.globe, size: 16),
                     SizedBox(width: 4),
-                    Text('翻译', style: TextStyle(fontSize: 14)),
+                    Text('Translate', style: TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
@@ -841,7 +841,7 @@ class _MaterialDetailScreenState extends State<MaterialDetailScreen> {
                   children: [
                     Icon(CupertinoIcons.doc_on_doc, size: 16),
                     SizedBox(width: 4),
-                    Text('复制', style: TextStyle(fontSize: 14)),
+                    Text('Copy', style: TextStyle(fontSize: 14)),
                   ],
                 ),
               ),
