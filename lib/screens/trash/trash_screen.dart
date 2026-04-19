@@ -60,14 +60,14 @@ class _TrashScreenState extends State<TrashScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: Text('确认恢复 ${_selectedIds.length} 项？'),
+        title: Text('Restore ${_selectedIds.length} items?'),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx, false),
           ),
           CupertinoDialogAction(
-            child: const Text('恢复'),
+            child: const Text('Restore'),
             onPressed: () => Navigator.pop(ctx, true),
           ),
         ],
@@ -92,16 +92,16 @@ class _TrashScreenState extends State<TrashScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: Text('永久删除 ${_selectedIds.length} 项？'),
-        content: const Text('此操作不可恢复！'),
+        title: Text('Permanently delete ${_selectedIds.length} items?'),
+        content: const Text('This action cannot be undone!'),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx, false),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            child: const Text('永久删除'),
+            child: const Text('Delete Permanently'),
             onPressed: () => Navigator.pop(ctx, true),
           ),
         ],
@@ -125,12 +125,12 @@ class _TrashScreenState extends State<TrashScreen> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: _isSelectionMode
-            ? Text('已选择 ${_selectedIds.length} 项')
-            : const Text('垃圾箱'),
+            ? Text('${_selectedIds.length} selected')
+            : const Text('Trash'),
         leading: _isSelectionMode
             ? CupertinoButton(
                 padding: EdgeInsets.zero,
-                child: const Text('取消'),
+                child: const Text('Cancel'),
                 onPressed: _exitSelectionMode,
               )
             : null,
@@ -141,14 +141,14 @@ class _TrashScreenState extends State<TrashScreen> {
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: _handleBatchRestore,
-                    child: const Text('恢复'),
+                    child: const Text('Restore'),
                   ),
                   const SizedBox(width: 8),
                   CupertinoButton(
                     padding: EdgeInsets.zero,
                     onPressed: _handleBatchDelete,
                     child: const Text(
-                      '永久删除',
+                      'Delete Permanently',
                       style: TextStyle(color: CupertinoColors.systemRed),
                     ),
                   ),
@@ -171,9 +171,9 @@ class _TrashScreenState extends State<TrashScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            '加载失败',
-                            style: const TextStyle(
+                          const Text(
+                            'Load Failed',
+                            style: TextStyle(
                               color: CupertinoColors.systemRed,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -182,7 +182,7 @@ class _TrashScreenState extends State<TrashScreen> {
                           const SizedBox(height: 16),
                           CupertinoButton.filled(
                             onPressed: _loadTrash,
-                            child: const Text('重试'),
+                            child: const Text('Retry'),
                           ),
                         ],
                       ),
@@ -201,7 +201,7 @@ class _TrashScreenState extends State<TrashScreen> {
                           ),
                           const SizedBox(height: ThemeConstants.spacingMd),
                           const Text(
-                            '垃圾箱为空',
+                            'Trash is Empty',
                             style: TextStyle(
                               color: CupertinoColors.secondaryLabel,
                             ),
