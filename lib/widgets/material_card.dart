@@ -294,7 +294,7 @@ class _PlaceholderIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: isVideo
-          ? CupertinoColors.systemGrey6
+          ? CupertinoColors.systemGrey5
           : CupertinoColors.systemGrey5,
       child: Center(
         child: Column(
@@ -304,7 +304,7 @@ class _PlaceholderIcon extends StatelessWidget {
               isVideo ? CupertinoIcons.video_camera : CupertinoIcons.photo,
               size: isVideo ? 50 : 40,
               color: isVideo
-                  ? CupertinoColors.systemGrey
+                  ? CupertinoColors.systemGrey2
                   : CupertinoColors.systemGrey3,
             ),
             if (isVideo) ...[
