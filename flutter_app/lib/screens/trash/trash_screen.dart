@@ -125,7 +125,7 @@ class _TrashScreenState extends State<TrashScreen> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: _isSelectionMode
-            ? Text('${_selectedIds.length} items selected')
+            ? Text('${_selectedIds.length} selected')
             : const Text('Trash'),
         leading: _isSelectionMode
             ? CupertinoButton(
@@ -171,9 +171,9 @@ class _TrashScreenState extends State<TrashScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            'Failed to load',
-                            style: const TextStyle(
+                          const Text(
+                            'Load Failed',
+                            style: TextStyle(
                               color: CupertinoColors.systemRed,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
@@ -201,7 +201,7 @@ class _TrashScreenState extends State<TrashScreen> {
                           ),
                           const SizedBox(height: ThemeConstants.spacingMd),
                           const Text(
-                            'Trash is empty',
+                            'Trash is Empty',
                             style: TextStyle(
                               color: CupertinoColors.secondaryLabel,
                             ),

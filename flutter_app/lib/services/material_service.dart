@@ -97,8 +97,8 @@ class MaterialService {
     final data = <String, dynamic>{};
     if (title != null) data['title'] = title;
     if (description != null) data['description'] = description;
-    if (usageTag != null) data['usageTag'] = usageTag;
-    if (viralTag != null) data['viralTag'] = viralTag;
+    if (usageTag != null) data['usage_tag'] = usageTag;
+    if (viralTag != null) data['viral_tag'] = viralTag;
 
     final response = await _apiService.dio.put(
       ApiConstants.materialById(id),
@@ -152,10 +152,10 @@ class MaterialService {
     }
   }
 
-  Future<void> batchCopy(List<int> ids, String targetFolder) async {
+  Future<void> batchCopy(List<int> ids, int targetUserId) async {
     final response = await _apiService.dio.post(
       ApiConstants.batchCopy,
-      data: {'ids': ids, 'targetFolder': targetFolder},
+      data: {'ids': ids, 'targetUserId': targetUserId},
     );
 
     if (response.statusCode != 200) {
@@ -163,10 +163,10 @@ class MaterialService {
     }
   }
 
-  Future<void> batchMove(List<int> ids, String targetFolder) async {
+  Future<void> batchMove(List<int> ids, int targetUserId, String targetFolder) async {
     final response = await _apiService.dio.post(
       ApiConstants.batchMove,
-      data: {'ids': ids, 'targetFolder': targetFolder},
+      data: {'ids': ids, 'targetUserId': targetUserId, 'targetFolder': targetFolder},
     );
 
     if (response.statusCode != 200) {

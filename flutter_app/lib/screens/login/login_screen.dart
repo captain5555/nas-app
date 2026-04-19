@@ -80,7 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
     final success = await authProvider.login(username, password);
 
     if (success) {
-      // Save username locally
       await UserStorage.saveUser(username);
       await _loadSavedUsers();
 
@@ -145,13 +144,12 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: ThemeConstants.spacingMd),
                   const Text(
-                    'NAS Media Manager',
+                    'NAS Material Manager',
                     style: ThemeConstants.titleStyle,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: ThemeConstants.spacingXl * 2),
 
-                  // Username
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.spacingSm),
                     child: Row(
@@ -183,7 +181,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: ThemeConstants.spacingMd),
 
-                  // Password
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: ThemeConstants.spacingSm),
                     child: CupertinoTextField(
@@ -212,7 +209,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: ThemeConstants.spacingXl),
 
-                  // Login button
                   CupertinoButton.filled(
                     onPressed: _submit,
                     child: const Text('Login'),
@@ -220,7 +216,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   const SizedBox(height: ThemeConstants.spacingMd),
                   const Text(
-                    'Admin: admin / admin123\nOther users: username / 123',
+                    'Admin account: admin / admin123\nOther users: username / 123',
                     style: ThemeConstants.captionStyle,
                     textAlign: TextAlign.center,
                   ),

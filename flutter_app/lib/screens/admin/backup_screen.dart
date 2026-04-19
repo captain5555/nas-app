@@ -170,7 +170,7 @@ class _BackupScreenState extends State<BackupScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Failed to load',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -204,7 +204,7 @@ class _BackupScreenState extends State<BackupScreen> {
                             ),
                             const SizedBox(height: ThemeConstants.spacingMd),
                             const Text(
-                              'No backups',
+                              'No Backups',
                               style: TextStyle(
                                 color: CupertinoColors.secondaryLabel,
                               ),

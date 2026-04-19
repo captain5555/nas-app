@@ -1,5 +1,5 @@
 name: nas_material_app
-description: NAS 素材管理系统 Flutter App
+description: NAS Material Manager Flutter App
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -21,6 +21,8 @@ dependencies:
   path_provider: ^2.1.2
   permission_handler: ^11.2.0
   intl: ^0.18.1
+  image_gallery_saver: ^2.0.3
+  app_settings: ^5.1.1
 
 dev_dependencies:
   flutter_test:

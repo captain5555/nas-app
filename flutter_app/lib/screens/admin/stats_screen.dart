@@ -63,7 +63,7 @@ class _StatsScreenState extends State<StatsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Failed to load',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,

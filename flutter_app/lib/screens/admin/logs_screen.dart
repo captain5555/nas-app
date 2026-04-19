@@ -63,13 +63,13 @@ class _LogsScreenState extends State<LogsScreen> {
       case 'update_material':
         return 'Update Material';
       case 'trash_material':
-        return 'Trash Material';
+        return 'Delete Material';
       case 'create_user':
         return 'Create User';
       case 'delete_user':
         return 'Delete User';
       case 'batch_trash':
-        return 'Batch Trash';
+        return 'Batch Delete';
       case 'batch_restore':
         return 'Batch Restore';
       case 'batch_copy':
@@ -101,7 +101,7 @@ class _LogsScreenState extends State<LogsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Failed to load',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -135,7 +135,7 @@ class _LogsScreenState extends State<LogsScreen> {
                             ),
                             const SizedBox(height: ThemeConstants.spacingMd),
                             const Text(
-                              'No logs',
+                              'No Logs',
                               style: TextStyle(
                                 color: CupertinoColors.secondaryLabel,
                               ),

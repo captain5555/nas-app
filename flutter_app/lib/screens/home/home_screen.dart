@@ -57,7 +57,7 @@ class _HomeScreenState extends State<HomeScreen> {
         items: const [
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.photo),
-            label: 'Media',
+            label: 'Materials',
           ),
           BottomNavigationBarItem(
             icon: Icon(CupertinoIcons.trash),
@@ -146,7 +146,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     setState(() => _isLoadingUsers = true);
     try {
       final users = await _userService.getUsers();
-      // 过滤掉管理员自己
+      // Filter out admin himself
       setState(() {
         _users = users.where((u) => u.id != authProvider.user?.id).toList();
       });
@@ -229,7 +229,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
         title: Text('Delete ${_selectedIds.length} items?'),
-        content: const Text('Deleted media will be moved to trash'),
+        content: const Text('Deleted materials will be moved to trash'),
         actions: [
           CupertinoDialogAction(
             child: const Text('Cancel'),
@@ -326,7 +326,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     showCupertinoModalPopup(
       context: context,
       builder: (ctx) => CupertinoActionSheet(
-        title: Text('Select destination folder (${targetUser.username})'),
+        title: Text('Select target folder (${targetUser.username})'),
         actions: [
           CupertinoActionSheetAction(
             onPressed: () {
@@ -500,7 +500,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
               Navigator.pop(ctx);
               _pickFromGallery();
             },
-            child: const Text('Choose from Gallery'),
+            child: const Text('Gallery'),
           ),
           CupertinoActionSheetAction(
             onPressed: () {
@@ -514,7 +514,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
               Navigator.pop(ctx);
               _pickFile();
             },
-            child: const Text('Choose File'),
+            child: const Text('File Select'),
           ),
         ],
         cancelButton: CupertinoActionSheetAction(
@@ -651,13 +651,13 @@ class _MaterialsTabState extends State<_MaterialsTab> {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: _isSelectionMode
-            ? Text('${_selectedIds.length} items selected')
+            ? Text('${_selectedIds.length} selected')
             : GestureDetector(
                 onTap: isAdmin ? _showUserSwitcher : null,
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(viewingUser?.username ?? 'Media'),
+                    Text(viewingUser?.username ?? 'Materials'),
                     if (isAdmin) ...[
                       const SizedBox(width: 4),
                       Icon(
@@ -765,7 +765,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text(
-                  'Failed to load',
+                  'Load Failed',
                   style: TextStyle(
                     color: CupertinoColors.systemRed,
                     fontSize: 18,
@@ -796,7 +796,7 @@ class _MaterialsTabState extends State<_MaterialsTab> {
                 ),
                 const SizedBox(height: ThemeConstants.spacingMd),
                 const Text(
-                  'No items',
+                  'No materials',
                   style: TextStyle(
                     color: CupertinoColors.secondaryLabel,
                   ),

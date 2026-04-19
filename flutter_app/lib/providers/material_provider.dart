@@ -13,25 +13,33 @@ class MaterialProvider with ChangeNotifier {
   bool _isLoading = false;
   String? _error;
   String _currentFolder = 'images';
+  int? _viewingUserId;
 
   List<Material> get materials => _materials;
   List<Material> get trashMaterials => _trashMaterials;
   bool get isLoading => _isLoading;
   String? get error => _error;
   String get currentFolder => _currentFolder;
+  int? get viewingUserId => _viewingUserId;
 
   void setFolder(String folder) {
     _currentFolder = folder;
     notifyListeners();
   }
 
-  Future<void> loadMaterials(User user) async {
+  void setViewingUser(int? userId) {
+    _viewingUserId = userId;
+    notifyListeners();
+  }
+
+  Future<void> loadMaterials(User user, {int? viewingUserId}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _materials = await _materialService.getUserMaterials(user.id, _currentFolder);
+      final userId = viewingUserId ?? _viewingUserId ?? user.id;
+      _materials = await _materialService.getUserMaterials(userId, _currentFolder);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -40,13 +48,14 @@ class MaterialProvider with ChangeNotifier {
     }
   }
 
-  Future<void> loadTrash(User user) async {
+  Future<void> loadTrash(User user, {int? viewingUserId}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      _trashMaterials = await _materialService.getTrashMaterials(user.id);
+      final userId = viewingUserId ?? _viewingUserId ?? user.id;
+      _trashMaterials = await _materialService.getTrashMaterials(userId);
     } catch (e) {
       _error = e.toString();
     } finally {
@@ -55,10 +64,10 @@ class MaterialProvider with ChangeNotifier {
     }
   }
 
-  Future<void> refresh(User user) async {
+  Future<void> refresh(User user, {int? viewingUserId}) async {
     await Future.wait([
-      loadMaterials(user),
-      loadTrash(user),
+      loadMaterials(user, viewingUserId: viewingUserId),
+      loadTrash(user, viewingUserId: viewingUserId),
     ]);
   }
 
@@ -162,6 +171,30 @@ class MaterialProvider with ChangeNotifier {
   Future<bool> batchDelete(List<int> ids, User user) async {
     try {
       await _materialService.batchDelete(ids);
+      await refresh(user);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> batchCopy(List<int> ids, int targetUserId, User user) async {
+    try {
+      await _materialService.batchCopy(ids, targetUserId);
+      await refresh(user);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> batchMove(List<int> ids, int targetUserId, String targetFolder, User user) async {
+    try {
+      await _materialService.batchMove(ids, targetUserId, targetFolder);
       await refresh(user);
       return true;
     } catch (e) {

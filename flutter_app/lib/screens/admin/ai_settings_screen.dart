@@ -60,7 +60,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.user?.role != 'admin') {
       if (mounted) {
-        _showError('Only admins can modify AI settings');
+        _showError('Only admin can modify AI settings');
       }
       return;
     }
@@ -158,7 +158,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Failed to load',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,

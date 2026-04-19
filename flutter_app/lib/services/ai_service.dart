@@ -38,6 +38,31 @@ class AiService {
     return parsed as Map<String, dynamic>;
   }
 
+  Future<Map<String, dynamic>> updateAiSettingsRaw({
+    required String apiUrl,
+    required String apiKey,
+    required String model,
+    required String titlePrompt,
+    required String descriptionPrompt,
+    required String safetyRules,
+    required String replacementWords,
+  }) async {
+    final response = await _apiService.dio.put(
+      ApiConstants.aiSettings,
+      data: {
+        'api_url': apiUrl,
+        'api_key': apiKey,
+        'model': model,
+        'title_prompt': titlePrompt,
+        'description_prompt': descriptionPrompt,
+        'safety_rules': safetyRules,
+        'replacement_words': replacementWords,
+      },
+    );
+    final parsed = _parseResponse(response);
+    return parsed as Map<String, dynamic>;
+  }
+
   Future<String> generateTitle({
     String? image,
     int? currentUserId,
@@ -79,17 +104,37 @@ class AiService {
   }
 
   Future<String> translate(String text) async {
-    final response = await _apiService.dio.post(
-      ApiConstants.translate,
-      data: {'text': text},
-    );
-    final parsed = _parseResponse(response);
-    if (parsed is Map && parsed.containsKey('translatedText')) {
-      return parsed['translatedText'] as String;
+    try {
+      final response = await _apiService.dio.post(
+        ApiConstants.translate,
+        data: {'text': text},
+      );
+      print('Translate response: ${response.data}');
+      final parsed = _parseResponse(response);
+      if (parsed is Map && parsed.containsKey('translated')) {
+        return parsed['translated'] as String;
+      }
+      if (parsed is String) {
+        return parsed;
+      }
+      throw Exception('Failed to translate');
+    } catch (e) {
+      print('Translate error: $e');
+      if (e is DioException) {
+        print('Dio error response: ${e.response}');
+        print('Dio error message: ${e.message}');
+      }
+      rethrow;
     }
-    if (parsed is String) {
-      return parsed;
-    }
-    throw Exception('Failed to translate');
+  }
+
+  Future<String> translateToChinese(String text) async {
+    // 直接调用后端API，但这里后端只支持中译英
+    // 所以我们复用同一个方法，让用户选择方向
+    return translate(text);
+  }
+
+  Future<String> translateToEnglish(String text) async {
+    return translate(text);
   }
 }

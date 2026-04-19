@@ -294,26 +294,27 @@ class _PlaceholderIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: isVideo
-          ? CupertinoColors.systemGrey5
+          ? CupertinoColors.systemGrey4
           : CupertinoColors.systemGrey5,
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              isVideo ? CupertinoIcons.video_camera : CupertinoIcons.photo,
-              size: isVideo ? 50 : 40,
+              isVideo ? CupertinoIcons.play_circle_fill : CupertinoIcons.photo,
+              size: isVideo ? 60 : 40,
               color: isVideo
-                  ? CupertinoColors.systemGrey2
+                  ? CupertinoColors.white
                   : CupertinoColors.systemGrey3,
             ),
             if (isVideo) ...[
               const SizedBox(height: 8),
               Text(
-                'Video Material',
+                'Video',
                 style: TextStyle(
-                  fontSize: 12,
-                  color: CupertinoColors.systemGrey,
+                  fontSize: 14,
+                  color: CupertinoColors.white,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],

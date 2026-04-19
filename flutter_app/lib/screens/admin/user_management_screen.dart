@@ -34,7 +34,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
     try {
       _users = await _userService.getUsers();
-      // 自动保存所有用户到登录列表
+      // Auto-save all users to login list
       for (final user in _users) {
         await UserStorage.saveUser(user.username);
       }
@@ -85,7 +85,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
   Future<void> _createUser(String username) async {
     try {
       await _userService.createUser(username);
-      // 保存新用户到登录列表
+      // Save new user to login list
       await UserStorage.saveUser(username);
       await _loadUsers();
     } catch (e) {
@@ -93,7 +93,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
         showCupertinoDialog(
           context: context,
           builder: (ctx) => CupertinoAlertDialog(
-            title: const Text('Creation Failed'),
+            title: const Text('Create Failed'),
             content: Text(e.toString()),
             actions: [
               CupertinoDialogAction(
@@ -112,7 +112,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
         title: Text('Delete user "${user.username}"?'),
-        content: const Text('This user\'s media will be transferred to admin'),
+        content: const Text('This user\'s materials will be transferred to admin'),
         actions: [
           CupertinoDialogAction(
             child: const Text('Cancel'),
@@ -179,7 +179,7 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Failed to load',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -294,7 +294,7 @@ class _UserCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  user.role == 'admin' ? 'Admin' : 'User',
+                  user.role == 'admin' ? 'Admin' : 'Regular User',
                   style: const TextStyle(
                     fontSize: 13,
                     color: CupertinoColors.secondaryLabel,
