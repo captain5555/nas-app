@@ -48,11 +48,11 @@ class _BackupScreenState extends State<BackupScreen> {
       await _adminService.createBackup();
       await _loadBackups();
       if (mounted) {
-        _showSuccess('备份创建成功');
+        _showSuccess('Backup created successfully');
       }
     } catch (e) {
       if (mounted) {
-        _showError('备份创建失败: $e');
+        _showError('Backup creation failed: $e');
       }
     } finally {
       if (mounted) {
@@ -65,16 +65,16 @@ class _BackupScreenState extends State<BackupScreen> {
     final confirmed = await showCupertinoDialog<bool>(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('确认删除'),
-        content: Text('确定要删除备份 $backupId 吗？'),
+        title: const Text('Confirm Delete'),
+        content: Text('Are you sure you want to delete backup $backupId?'),
         actions: [
           CupertinoDialogAction(
-            child: const Text('取消'),
+            child: const Text('Cancel'),
             onPressed: () => Navigator.pop(ctx, false),
           ),
           CupertinoDialogAction(
             isDestructiveAction: true,
-            child: const Text('删除'),
+            child: const Text('Delete'),
             onPressed: () => Navigator.pop(ctx, true),
           ),
         ],
@@ -86,11 +86,11 @@ class _BackupScreenState extends State<BackupScreen> {
         await _adminService.deleteBackup(backupId);
         await _loadBackups();
         if (mounted) {
-          _showSuccess('删除成功');
+          _showSuccess('Deleted successfully');
         }
       } catch (e) {
         if (mounted) {
-          _showError('删除失败: $e');
+          _showError('Delete failed: $e');
         }
       }
     }
@@ -100,11 +100,11 @@ class _BackupScreenState extends State<BackupScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('成功'),
+        title: const Text('Success'),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('确定'),
+            child: const Text('OK'),
             onPressed: () => Navigator.pop(ctx),
           ),
         ],
@@ -116,11 +116,11 @@ class _BackupScreenState extends State<BackupScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('错误'),
+        title: const Text('Error'),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('确定'),
+            child: const Text('OK'),
             onPressed: () => Navigator.pop(ctx),
           ),
         ],
@@ -152,7 +152,7 @@ class _BackupScreenState extends State<BackupScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('备份管理'),
+        middle: const Text('Backup Management'),
         trailing: _isCreating
             ? const CupertinoActivityIndicator()
             : CupertinoButton(
@@ -170,7 +170,7 @@ class _BackupScreenState extends State<BackupScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '加载失败',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -187,7 +187,7 @@ class _BackupScreenState extends State<BackupScreen> {
                         const SizedBox(height: 16),
                         CupertinoButton.filled(
                           onPressed: _loadBackups,
-                          child: const Text('重试'),
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -204,7 +204,7 @@ class _BackupScreenState extends State<BackupScreen> {
                             ),
                             const SizedBox(height: ThemeConstants.spacingMd),
                             const Text(
-                              '暂无备份',
+                              'No Backups',
                               style: TextStyle(
                                 color: CupertinoColors.secondaryLabel,
                               ),
@@ -274,7 +274,7 @@ class _BackupCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  backup['id']?.toString() ?? '未知',
+                  backup['id']?.toString() ?? 'Unknown',
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,

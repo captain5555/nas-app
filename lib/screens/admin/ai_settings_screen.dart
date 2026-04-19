@@ -60,7 +60,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.user?.role != 'admin') {
       if (mounted) {
-        _showError('只有管理员可以修改AI设置');
+        _showError('Only admin can modify AI settings');
       }
       return;
     }
@@ -79,11 +79,11 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
       );
 
       if (mounted) {
-        _showSuccess('保存成功');
+        _showSuccess('Saved successfully');
       }
     } catch (e) {
       if (mounted) {
-        _showError('保存失败: $e');
+        _showError('Save failed: $e');
       }
     } finally {
       if (mounted) {
@@ -96,11 +96,11 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('成功'),
+        title: const Text('Success'),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('确定'),
+            child: const Text('OK'),
             onPressed: () => Navigator.pop(ctx),
           ),
         ],
@@ -112,11 +112,11 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
     showCupertinoDialog(
       context: context,
       builder: (ctx) => CupertinoAlertDialog(
-        title: const Text('错误'),
+        title: const Text('Error'),
         content: Text(message),
         actions: [
           CupertinoDialogAction(
-            child: const Text('确定'),
+            child: const Text('OK'),
             onPressed: () => Navigator.pop(ctx),
           ),
         ],
@@ -140,13 +140,13 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('AI 设置'),
+        middle: const Text('AI Settings'),
         trailing: _isSaving
             ? const CupertinoActivityIndicator()
             : CupertinoButton(
                 padding: EdgeInsets.zero,
                 onPressed: _saveSettings,
-                child: const Text('保存'),
+                child: const Text('Save'),
               ),
       ),
       child: SafeArea(
@@ -158,7 +158,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '加载失败',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -168,7 +168,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                         const SizedBox(height: 16),
                         CupertinoButton.filled(
                           onPressed: _loadSettings,
-                          child: const Text('重试'),
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -188,19 +188,19 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
                           children: const {
                             0: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text('API配置'),
+                              child: Text('API Config'),
                             ),
                             1: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text('提示词'),
+                              child: Text('Prompts'),
                             ),
                             2: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text('安全规则'),
+                              child: Text('Safety Rules'),
                             ),
                             3: Padding(
                               padding: EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                              child: Text('替换词'),
+                              child: Text('Replacements'),
                             ),
                           },
                         ),
@@ -227,24 +227,24 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
       padding: const EdgeInsets.all(ThemeConstants.spacingMd),
       children: [
         _buildSection(
-          title: 'API 配置',
+          title: 'API Configuration',
           children: [
             _buildTextField(
               controller: _apiUrlController,
-              placeholder: 'API 地址',
+              placeholder: 'API URL',
               prefix: CupertinoIcons.link,
             ),
             const SizedBox(height: ThemeConstants.spacingMd),
             _buildTextField(
               controller: _apiKeyController,
-              placeholder: 'API 密钥',
+              placeholder: 'API Key',
               prefix: CupertinoIcons.lock,
               obscureText: true,
             ),
             const SizedBox(height: ThemeConstants.spacingMd),
             _buildTextField(
               controller: _modelController,
-              placeholder: '模型名称',
+              placeholder: 'Model Name',
               prefix: CupertinoIcons.circle_grid_3x3,
             ),
           ],
@@ -258,11 +258,11 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
       padding: const EdgeInsets.all(ThemeConstants.spacingMd),
       children: [
         _buildSection(
-          title: '提示词配置',
+          title: 'Prompt Configuration',
           children: [
             _buildTextField(
               controller: _titlePromptController,
-              placeholder: '标题生成提示词',
+              placeholder: 'Title Generation Prompt',
               prefix: CupertinoIcons.doc_text,
               minLines: 5,
               maxLines: 10,
@@ -270,7 +270,7 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
             const SizedBox(height: ThemeConstants.spacingMd),
             _buildTextField(
               controller: _descriptionPromptController,
-              placeholder: '描述生成提示词',
+              placeholder: 'Description Generation Prompt',
               prefix: CupertinoIcons.doc_text_fill,
               minLines: 5,
               maxLines: 10,
@@ -286,11 +286,11 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
       padding: const EdgeInsets.all(ThemeConstants.spacingMd),
       children: [
         _buildSection(
-          title: '安全规则',
+          title: 'Safety Rules',
           children: [
             _buildTextField(
               controller: _safetyRulesController,
-              placeholder: '安全规则',
+              placeholder: 'Safety Rules',
               prefix: CupertinoIcons.shield_fill,
               minLines: 8,
               maxLines: 15,
@@ -306,18 +306,18 @@ class _AiSettingsScreenState extends State<AiSettingsScreen> {
       padding: const EdgeInsets.all(ThemeConstants.spacingMd),
       children: [
         _buildSection(
-          title: '替换词',
+          title: 'Replacement Words',
           children: [
             _buildTextField(
               controller: _replacementWordsController,
-              placeholder: '替换词 (JSON格式)',
+              placeholder: 'Replacement Words (JSON format)',
               prefix: CupertinoIcons.arrow_right_arrow_left,
               minLines: 8,
               maxLines: 15,
             ),
             const SizedBox(height: ThemeConstants.spacingSm),
             const Text(
-              '格式: JSON数组，例如 [{"original":"敏感词1","replacement":"替换词1"},{"original":"敏感词2","replacement":"替换词2"}]',
+              'Format: JSON array, e.g. [{"original":"sensitive1","replacement":"replace1"},{"original":"sensitive2","replacement":"replace2"}]',
               style: TextStyle(
                 fontSize: 12,
                 color: CupertinoColors.secondaryLabel,

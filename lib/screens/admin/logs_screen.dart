@@ -55,29 +55,29 @@ class _LogsScreenState extends State<LogsScreen> {
   String _getActionLabel(String? action) {
     switch (action) {
       case 'login':
-        return '登录';
+        return 'Login';
       case 'logout':
-        return '退出';
+        return 'Logout';
       case 'upload_material':
-        return '上传素材';
+        return 'Upload Material';
       case 'update_material':
-        return '更新素材';
+        return 'Update Material';
       case 'trash_material':
-        return '删除素材';
+        return 'Delete Material';
       case 'create_user':
-        return '创建用户';
+        return 'Create User';
       case 'delete_user':
-        return '删除用户';
+        return 'Delete User';
       case 'batch_trash':
-        return '批量删除';
+        return 'Batch Delete';
       case 'batch_restore':
-        return '批量恢复';
+        return 'Batch Restore';
       case 'batch_copy':
-        return '批量复制';
+        return 'Batch Copy';
       case 'batch_move':
-        return '批量移动';
+        return 'Batch Move';
       default:
-        return action ?? '未知';
+        return action ?? 'Unknown';
     }
   }
 
@@ -85,7 +85,7 @@ class _LogsScreenState extends State<LogsScreen> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('操作日志'),
+        middle: const Text('Activity Logs'),
         trailing: CupertinoButton(
           padding: EdgeInsets.zero,
           onPressed: _loadLogs,
@@ -101,7 +101,7 @@ class _LogsScreenState extends State<LogsScreen> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '加载失败',
+                          'Load Failed',
                           style: const TextStyle(
                             color: CupertinoColors.systemRed,
                             fontSize: 18,
@@ -118,7 +118,7 @@ class _LogsScreenState extends State<LogsScreen> {
                         const SizedBox(height: 16),
                         CupertinoButton.filled(
                           onPressed: _loadLogs,
-                          child: const Text('重试'),
+                          child: const Text('Retry'),
                         ),
                       ],
                     ),
@@ -135,7 +135,7 @@ class _LogsScreenState extends State<LogsScreen> {
                             ),
                             const SizedBox(height: ThemeConstants.spacingMd),
                             const Text(
-                              '暂无日志',
+                              'No Logs',
                               style: TextStyle(
                                 color: CupertinoColors.secondaryLabel,
                               ),
@@ -217,7 +217,7 @@ class _LogCard extends StatelessWidget {
           if (log['user_id'] != null) ...[
             const SizedBox(height: 8),
             Text(
-              '用户ID: ${log['user_id']}',
+              'User ID: ${log['user_id']}',
               style: const TextStyle(
                 fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
@@ -227,7 +227,7 @@ class _LogCard extends StatelessWidget {
           if (log['target_type'] != null) ...[
             const SizedBox(height: 4),
             Text(
-              '目标类型: ${log['target_type']}',
+              'Target Type: ${log['target_type']}',
               style: const TextStyle(
                 fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
@@ -237,7 +237,7 @@ class _LogCard extends StatelessWidget {
           if (log['target_id'] != null) ...[
             const SizedBox(height: 4),
             Text(
-              '目标ID: ${log['target_id']}',
+              'Target ID: ${log['target_id']}',
               style: const TextStyle(
                 fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
@@ -247,7 +247,7 @@ class _LogCard extends StatelessWidget {
           if (log['details'] != null && log['details'].toString().isNotEmpty) ...[
             const SizedBox(height: 4),
             Text(
-              '详情: ${log['details']}',
+              'Details: ${log['details']}',
               style: const TextStyle(
                 fontSize: 12,
                 color: CupertinoColors.secondaryLabel,
